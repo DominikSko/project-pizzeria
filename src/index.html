@@ -58,7 +58,7 @@
     <div id="product-list" class="product-list container"></div>
 
     <script id="template-menu-product" type="text/x-handlebars-template">
-      <article class="product active"> <!-- product -->
+      <article class="product"> <!-- product -->
 
           <header class="product__header">
             <h3 class="product__name no-spacing">{{ name }} <i class="fas fa-chevron-down product__icon"></i></h3>
@@ -70,6 +70,7 @@
           <div class="product__wrapper"> <!-- details -->
             <form class="product__order">
               <ul class="product__params"> <!-- params -->
+                <!-- pętla, która będzie iterować po wszystkich elementach obiektu params -->
                 {{#each params as |param paramId| }}
                 {{#ifEquals type "checkboxes"}}
                 <li> <!-- checkboxes -->
@@ -128,7 +129,8 @@
             </form>
             <div class="product__images {{ class }}"> <!-- images -->
               {{#each images}}
-              {{{ this }}}
+              {{{ this }}} <!-- Słowo this odnosi się do pojedynczego elementu, po którym iteruje pętla-->
+              <!-- W miejsce this zostanie wstawiony pojedynczy element tablicy images -->
               {{/each}}
             </div>
           </div>

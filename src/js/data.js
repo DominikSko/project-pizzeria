@@ -1,4 +1,5 @@
 const dataSource = {}; // eslint-disable-line no-unused-vars
+//  obiekt dataSourc,   tj. definicje naszych produktów
 
 dataSource.products = {
   cake: {
@@ -18,11 +19,11 @@ dataSource.products = {
     images: [
       '<img class="active" src="images/breakfast.svg">',
     ],
-    params: {
+    params: {  // opcji produktu podzieliliśmy na "kategorie", które nazwaliśmy params
       coffee: {
-        label: 'Coffee type',
-        type: 'radios',
-        options: {
+        label: 'Coffee type',  // nazwę wyświetlaną na stronie,
+        type: 'radios', // radio button options albo select
+        options: {       // zestaw możliwych opcji dla danego parametru.
           latte: {label: 'Latte', price: 1, default: true},
           cappuccino: {label: 'Cappuccino', price: 1},
           espresso: {label: 'Espresso', price: 1},
