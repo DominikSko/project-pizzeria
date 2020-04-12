@@ -83,8 +83,8 @@
       menuContainer.appendChild(thisProduct.element);  // za pomocą metody appendChild dodajemy stworzony element do menu!
     }
 
-    initAccordion (){         // tworze nową metode w klasie produkt
-      const thisProduct = this;  // dodaje tą samą stałą ?
+    //initAccordion (){         // tworze nową metode w klasie produkt
+    //  const thisProduct = this;  // dodaje tą samą stałą ?
 
 
 
@@ -92,7 +92,7 @@
 
 
 
-    }
+    //}
   }
 
   const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplikacji
