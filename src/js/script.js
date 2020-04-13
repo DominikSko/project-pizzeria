@@ -83,16 +83,46 @@
       menuContainer.appendChild(thisProduct.element);  // za pomocą metody appendChild dodajemy stworzony element do menu!
     }
 
-    //initAccordion (){         // tworze nową metode w klasie produkt
-    //  const thisProduct = this;  // dodaje tą samą stałą ?
+    initAccordion (){         // tworze nową metode w klasie produkt
+      const thisProduct = this;  // dodaje tą samą stałą ?
+
+    /* find the clickable trigger (the element that should react to clicking) */
+      const clickableTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
+
+    /* START: click event listener to trigger */
+      clickableTrigger.addEventListener('click', function(){
+      console.log('clicked');
 
 
+    /* prevent default action for event */
+      event.preventDefault();
 
+    /* toggle active class on element of thisProduct */
+      thisProduct.element.classList.toggle('active');    // toggle - dodanie klasy jesli jej nie bylo i vice versa
 
+    /* find all active products */
 
+      const activeProducts = document.querySelectorAll('article.active');
 
+    /* START LOOP: for each active product */
+      for (let activeProduct of activeProducts) {
 
-    //}
+        /* START: if the active product isn't the element of thisProduct */
+        if (activeProduct !== thisProduct.element) {       // !== do omówienia i thisProduct.element ?
+
+        //* remove class active for the active product */
+        activeProduct.classList.remove('active');   // trzeba dodac classlist przed add/remove/toggle itd
+
+        //* END: if the active product isn't the element of thisProduct */
+        }
+
+      /* END LOOP: for each active product */
+      }
+
+    /* END: click event listener to trigger */
+      });
+
+    }
   }
 
   const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplikacji
@@ -128,6 +158,5 @@
     },
   };
 
-
-  app.init();      // wywołanie metody, która będzie uruchamiać wszystkie pozostałe komponenty strony
+  app.init();  // wywołanie metody, która będzie uruchamiać wszystkie pozostałe komponenty strony
 }
