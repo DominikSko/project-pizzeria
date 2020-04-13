@@ -1,0 +1,3 @@
+eslint in json line:
+
+"test:js": "eslint src/js/",

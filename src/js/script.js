@@ -60,8 +60,8 @@
       thisProduct.id = id;      // musimy zapisać właściwości instancji, która jest reprezentowana przez obiekt this.
       thisProduct.data = data;  // dla czytelności zapisujemy go w stałej thisProduct,
 
-      thisProduct.initAccordion();   // dodaje w konstruktorze wywołanie metody init accordeon
       thisProduct.renderInMenu();
+      thisProduct.initAccordion();   // dodaje w konstruktorze wywołanie metody init accordeon
 
       console.log('new Product:', thisProduct);  //wyświetlona przez konstruktor klasy
     }
@@ -86,40 +86,40 @@
     initAccordion (){         // tworze nową metode w klasie produkt
       const thisProduct = this;  // dodaje tą samą stałą ?
 
-    /* find the clickable trigger (the element that should react to clicking) */
+      /* find the clickable trigger (the element that should react to clicking) */
       const clickableTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
 
-    /* START: click event listener to trigger */
+      /* START: click event listener to trigger */
       clickableTrigger.addEventListener('click', function(){
-      console.log('clicked');
+        console.log('clicked');
 
 
-    /* prevent default action for event */
-      event.preventDefault();
+        /* prevent default action for event */
+        event.preventDefault();
 
-    /* toggle active class on element of thisProduct */
-      thisProduct.element.classList.toggle('active');    // toggle - dodanie klasy jesli jej nie bylo i vice versa
+        /* toggle active class on element of thisProduct */
+        thisProduct.element.classList.toggle('active');    // toggle - dodanie klasy jesli jej nie bylo i vice versa
 
-    /* find all active products */
+        /* find all active products */
 
-      const activeProducts = document.querySelectorAll('article.active');
+        const activeProducts = document.querySelectorAll('article.active');
 
-    /* START LOOP: for each active product */
-      for (let activeProduct of activeProducts) {
+        /* START LOOP: for each active product */
+        for (let activeProduct of activeProducts) {
 
-        /* START: if the active product isn't the element of thisProduct */
-        if (activeProduct !== thisProduct.element) {       // !== do omówienia i thisProduct.element ?
+          /* START: if the active product isn't the element of thisProduct */
+          if (activeProduct !== thisProduct.element) {       // !== do omówienia i thisProduct.element ?
 
-        //* remove class active for the active product */
-        activeProduct.classList.remove('active');   // trzeba dodac classlist przed add/remove/toggle itd
+            //* remove class active for the active product */
+            activeProduct.classList.remove('active');   // trzeba dodac classlist przed add/remove/toggle itd
 
-        //* END: if the active product isn't the element of thisProduct */
+            //* END: if the active product isn't the element of thisProduct */
+          }
+
+          /* END LOOP: for each active product */
         }
 
-      /* END LOOP: for each active product */
-      }
-
-    /* END: click event listener to trigger */
+        /* END: click event listener to trigger */
       });
 
     }
