@@ -61,7 +61,10 @@
       thisProduct.data = data;  // dla czytelności zapisujemy go w stałej thisProduct,
 
       thisProduct.renderInMenu();
+      thisProduct.getElements();
       thisProduct.initAccordion();   // dodaje w konstruktorze wywołanie metody init accordeon
+      thisProduct.initOrderForm();
+      thisProduct.processOrder();
 
       console.log('new Product:', thisProduct);  //wyświetlona przez konstruktor klasy
     }
@@ -83,14 +86,24 @@
       menuContainer.appendChild(thisProduct.element);  // za pomocą metody appendChild dodajemy stworzony element do menu!
     }
 
-    initAccordion (){         // tworze nową metode w klasie produkt
+    getElements(){   // tworzymy metodę aby wyszukiować elementy DOM, pod obliczanie ceny produktów
+      const thisProduct = this;
+
+      thisProduct.accordionTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
+      thisProduct.form = thisProduct.element.querySelector(select.menuProduct.form);   // formularz zamówienia produktu
+      thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);   // form.queryALL ?  // wszystkie jego kontrolki (checkboksy, selecty, etc.),
+      thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
+      thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
+    }
+
+    initAccordion(){         // tworze nową metode w klasie produkt
       const thisProduct = this;  // dodaje tą samą stałą ?
 
       /* find the clickable trigger (the element that should react to clicking) */
-      const clickableTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
+      //const clickableTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
 
       /* START: click event listener to trigger */
-      clickableTrigger.addEventListener('click', function(){
+      thisProduct.accordionTrigger.addEventListener('click', function(){  // wykorzystana zmienna z metody getElements
         console.log('clicked');
 
 
@@ -115,13 +128,61 @@
 
             //* END: if the active product isn't the element of thisProduct */
           }
-
           /* END LOOP: for each active product */
         }
-
         /* END: click event listener to trigger */
       });
+    }
+    initOrderForm(){      // tworzymy kolejne metody w klasie product
+      const thisProduct = this;
+      console.log(this.initOrderFrom);
 
+      thisProduct.form.addEventListener('submit', function(event){  // do omówienia
+        event.preventDefault();
+        thisProduct.processOrder();
+      });
+
+      for(let input of thisProduct.formInputs){                     // do omówienia
+        input.addEventListener('change', function(){
+          thisProduct.processOrder();
+        });
+      }
+
+      thisProduct.cartButton.addEventListener('click', function(){  // do omówienia
+        event.preventDefault();
+        thisProduct.processOrder();
+      });
+
+    }
+    processOrder(){
+      const thisProduct = this;
+
+      const formData = utils.serializeFormToObject(thisProduct.form);
+      console.log('formData', formData);
+
+      /* read all data from the form (using utils.serializeFormToObject) and save it to const formData */
+
+      /* set variable price to equal thisProduct.data.price */
+
+      /* START LOOP: for each paramId in thisProduct.data.params */
+        /* save the element in thisProduct.data.params with key paramId as const param */
+
+        /* START LOOP: for each optionId in param.options */
+          /* save the element in param.options with key optionId as const option */
+
+          /* START IF: if option is selected and option is not default */
+            /* add price of option to variable price */
+          /* END IF: if option is selected and option is not default */
+          /* START ELSE IF: if option is not selected and option is default */
+            /* deduct price of option from price */
+      //}
+          /* END ELSE IF: if option is not selected and option is default */
+    //  }
+        /* END LOOP: for each optionId in param.options */
+    //}
+      /* END LOOP: for each paramId in thisProduct.data.params */
+
+      /* set the contents of thisProduct.priceElem to be the value of variable price */
     }
   }
 

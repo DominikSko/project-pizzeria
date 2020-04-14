@@ -1,3 +1,7 @@
 eslint in json line:
 
 "test:js": "eslint src/js/",
+
+równiez usuniête z jsona :
+
+"test:js": "eslint --fix src/js/",
