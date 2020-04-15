@@ -94,6 +94,7 @@
       thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);   // form.queryALL ?  // wszystkie jego kontrolki (checkboksy, selecty, etc.),
       thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
       thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
+      thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper); // pojedynczy element o selektorze zapisanym w select.menuProduct.imageWrapper, wyszukany w elemencie thisProduct.element.
     }
 
     initAccordion(){         // tworze nową metode w klasie produkt
@@ -178,7 +179,7 @@
           const option = param.options[optionId];  // save the element in param.options with key optionId as const option
           console.log('option', option);
 
-
+          // do wytłumaczenia ta stała > -1;
           const optionSelected = formData.hasOwnProperty(paramId) && formData[paramId].indexOf(optionId) > -1;
           // START IF: if option is selected and option is not default
           if(optionSelected && !option.default){
@@ -193,6 +194,34 @@
             price -= option.price;
 
           } // END ELSE IF,
+
+          //make constant and add to it all images for option
+
+          const optionImages = thisProduct.imageWrapper.querySelectorAll('.' + paramId + '-' + optionId);  // DO OMÓWIENIA
+          //console.log('IMAGES:', optionImages);
+
+          // if else dla obrazków mamy klucz parametru, klucz opcji i info. czy opcja jets zaznaczona
+
+          if(optionSelected){
+            if(!thisProduct.params[paramId]){  // DO OMÓWIENIA
+
+              thisProduct.params[paramId] = {  // DO OMÓWIENIA
+                label: param.label,            // DO OMÓWIENIA
+                options: {},                   // DO OMÓWIENIA
+              };
+            }
+            thisProduct.params[paramId].options[optionId] = option.label; // DO OMÓWIENIA
+
+            for (let images of optionImages) {    // DO OMÓWIENIA
+              images.classList.add(classNames.menuProduct.imageVisible);   // DO OMÓWIENIA
+            }
+          }
+          else {
+            for(let images of optionImages) {  // DO OMÓWIENIA
+              images.classList.remove(classNames.menuProduct.imageVisible);  // DO OMÓWIENIA
+            }
+          }
+
         }   // END LOOP: for each optionId in param.options
       }     // END LOOP: for each paramId in thisProduct.data.params
 
