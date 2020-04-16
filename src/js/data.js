@@ -24,8 +24,8 @@ dataSource.products = {
         label: 'Coffee type',  // nazwę wyświetlaną na stronie,
         type: 'radios', // radio button options albo select
         options: {       // zestaw możliwych opcji dla danego parametru.
-          latte: {label: 'Latte', price: 1, default: true},
-          cappuccino: {label: 'Cappuccino', price: 1},
+          latte: {label: 'Latte', price: 2, default: true},
+          cappuccino: {label: 'Cappuccino', price: 2},
           espresso: {label: 'Espresso', price: 1},
           macchiato : {label: 'Macchiato ', price: 1},
         },

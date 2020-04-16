@@ -64,12 +64,13 @@
       thisProduct.getElements();
       thisProduct.initAccordion();   // dodaje w konstruktorze wywołanie metody init accordeon
       thisProduct.initOrderForm();
+      thisProduct.initAmountWidget();
       thisProduct.processOrder();
 
       console.log('new Product:', thisProduct);  //wyświetlona przez konstruktor klasy
     }
 
-    renderInMenu (){    // tworzymy metodę renderInMenu, która będzie renderować nasze produkty na stronie.
+    renderInMenu(){    // tworzymy metodę renderInMenu, która będzie renderować nasze produkty na stronie.
       const thisProduct = this;
 
       // generowanie HTML based on template
@@ -85,18 +86,18 @@
       // dodajemy stworzony element na stronę
       menuContainer.appendChild(thisProduct.element);  // za pomocą metody appendChild dodajemy stworzony element do menu!
     }
-
     getElements(){   // tworzymy metodę aby wyszukiować elementy DOM, pod obliczanie ceny produktów
       const thisProduct = this;
 
+      // wlaściwosci z wartością
       thisProduct.accordionTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
       thisProduct.form = thisProduct.element.querySelector(select.menuProduct.form);   // formularz zamówienia produktu
       thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);   // form.queryALL ?  // wszystkie jego kontrolki (checkboksy, selecty, etc.),
       thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
       thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
       thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper); // pojedynczy element o selektorze zapisanym w select.menuProduct.imageWrapper, wyszukany w elemencie thisProduct.element.
+      thisProduct.amountWidgetElem = thisProduct.element.querySelector(select.menuProduct.amountWidget);
     }
-
     initAccordion(){         // tworze nową metode w klasie produkt
       const thisProduct = this;  // dodaje tą samą stałą ?
 
@@ -105,7 +106,7 @@
 
       /* START: click event listener to trigger */
       thisProduct.accordionTrigger.addEventListener('click', function(){  // wykorzystana zmienna z metody getElements
-        console.log('clicked');
+        //console.log('clicked');
 
 
         /* prevent default action for event */
@@ -136,7 +137,7 @@
     }
     initOrderForm(){      // tworzymy kolejne metody w klasie product
       const thisProduct = this;
-      console.log(this.initOrderFrom);
+      //console.log(this.initOrderFrom);
 
       thisProduct.form.addEventListener('submit', function(event){  // do omówienia
         event.preventDefault();
@@ -155,7 +156,6 @@
       });
 
     }
-
     processOrder(){
       const thisProduct = this;
 
@@ -167,17 +167,17 @@
 
       // set variable price to equal thisProduct.data.price
       let price = thisProduct.data.price;
-      console.log(price);
+      //console.log(price);
 
       // START LOOP: for each paramId in thisProduct.data.params
       for(let paramId in thisProduct.data.params) {
         const param = thisProduct.data.params[paramId]; // save the element in thisProduct.data.params with key paramId as const param
-        console.log('param:',param);
+        //console.log('param:',param);
 
         // START LOOP: for each optionId in param.options
         for(let optionId in param.options){
           const option = param.options[optionId];  // save the element in param.options with key optionId as const option
-          console.log('option', option);
+          //console.log('option', option);
 
           // do wytłumaczenia ta stała > -1;
           const optionSelected = formData.hasOwnProperty(paramId) && formData[paramId].indexOf(optionId) > -1;
@@ -225,10 +225,81 @@
         }   // END LOOP: for each optionId in param.options
       }     // END LOOP: for each paramId in thisProduct.data.params
 
+      // multiply price by amount
+      // W ten sposób, tuż przed wyświetleniem ceny obliczonej z uwzględnieniem opcji,
+      //pomnożymy ją przez ilość sztuk wybraną w widgecie!
+      price *= thisProduct.amountWidget.value;
       // set the contents of thisProduct.priceElem to be the value of variable price
+      // metoda ustawia zawartość thisProduct.priceElem na wartość zmiennej price.
       thisProduct.priceElem.innerHTML = price;
     }
+    initAmountWidget(){
+      const thisProduct = this;
+      // nowa metoda initAmountWidget bedzie tworzyla instacje klasy AmountWidget i zapisywala ja we wlasciowsci produktu
+      thisProduct.amountWidget = new AmountWidget(thisProduct.amountWidgetElem);
 
+      thisProduct.amountWidgetElem.addEventListener('updated', function(){
+        thisProduct.processOrder();
+      });
+    }
+  }
+
+  class AmountWidget {      // do omówienia
+    constructor(element){
+      const thisWidget = this;
+
+      thisWidget.getElements(element);
+      thisWidget.value = settings.amountWidget.defaultValue;
+      thisWidget.setValue(thisWidget.input.value);
+      thisWidget.initActions();
+      //console.log('AmountWidget', thisWidget);
+      //console.log('constructor arguments', element);
+    }
+    getElements(element){
+      const thisWidget = this;
+
+      thisWidget.element = element;
+      thisWidget.input = thisWidget.element.querySelector(select.widgets.amount.input);
+      thisWidget.linkDecrease = thisWidget.element.querySelector(select.widgets.amount.linkDecrease);
+      thisWidget.linkIncrease = thisWidget.element.querySelector(select.widgets.amount.linkIncrease);
+    }
+    setValue(value){
+      const thisWidget = this;
+
+      const newValue = parseInt(value);
+
+      // walidacja DO OMÓWIENIA NEWVALUE ?
+      if (newValue != thisWidget.value && newValue >= settings.amountWidget.defaultMin && newValue <= settings.amountWidget.defaultMax) {
+        thisWidget.value = newValue;
+        thisWidget.announce();
+      }
+
+      thisWidget.input.value = thisWidget.value;
+      // Na razie ta metoda tylko zapisuje we właściwości thisWidget.value wartość przekazanego argumentu,
+      //po przekonwertowaniu go na liczbę. Robimy to na wypadek, gdyby argument był tekstem – a tak właśnie będzie
+      //w przypadku odczytania wartości inputa.
+    }
+    initActions(){
+      const thisWidget = this;
+
+      thisWidget.input.addEventListener('change', function(){  // do omówienia
+        thisWidget.setValue(thisWidget.input.value);
+      });
+      thisWidget.linkDecrease.addEventListener('click', function(event){  // do omówienia
+        event.preventDefault();
+        thisWidget.setValue(thisWidget.value - 1);
+      });
+      thisWidget.linkIncrease.addEventListener('click', function(event){  // do omówienia
+        event.preventDefault();
+        thisWidget.setValue(thisWidget.value + 1);
+      });
+    }
+    announce(){  // Zacznijmy od stworzenia metody announce. Będzie ona tworzyła instancje klasy Event,
+      const thisWidget = this;                       //  wbudowanej w silnik JS (czyli w przeglądarkę).
+
+      const event = new Event('updated');
+      thisWidget.element.dispatchEvent(event);
+    }
   }
 
   const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplikacji
