@@ -79,7 +79,7 @@
     cartProduct: Handlebars.compile(document.querySelector(select.templateOf.cartProduct).innerHTML),
   };
 
-  class Product {     // stworzenia klasy Product tj. szablon obiektu, szablon instancji które będa działać wg. tej klasy
+  class Product{     // stworzenia klasy Product tj. szablon obiektu, szablon instancji które będa działać wg. tej klasy
     constructor(id, data){    // to specjalna metoda, która uruchomi się przy tworzeniu każdej instancji
       const thisProduct = this;   // this reprezentuje pojedyńczą instancję tego szablonu
 
@@ -270,7 +270,7 @@
     }
   }
 
-  class AmountWidget {      // do omówienia
+  class AmountWidget{      // do omówienia
     constructor(element){
       const thisWidget = this;
 
@@ -328,6 +328,36 @@
     }
   }
 
+  class Cart{
+    constructor(element){
+      const thisCart = this;
+
+      thisCart.products = [];  // Od razu stworzyliśmy tablicę thisCart.products, w której będziemy przechowywać produkty dodane do koszyka.
+
+      thisCart.getElements(element);
+      thisCart.initActions();
+
+      console.log('new Cart', thisCart);
+    }
+    initActions(){
+      const thisCart = this;
+
+      thisCart.dom.toggleTrigger.addEventListener('click', function(){
+        thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);
+      });
+    }
+    getElements(element){   // do omówienia, bierze z wrappera element?
+      const thisCart = this;
+
+      thisCart.dom = {};  // obiekt thisCart.dom. W nim będziemy przechowywać wszystkie elementy DOM, wyszukane w komponencie koszyka.
+      //Ułatwi nam to ich nazewnictwo, ponieważ zamiast np. thisCart.amountElem będziemy mieli thisCart.dom.amount.
+      thisCart.dom.wrapper = element;
+
+      thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
+
+    }
+  }
+
   const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplikacji
     initMenu: function(){          // deklarację metody
 
@@ -342,7 +372,6 @@
       //const testProduct = new Product();    //tworzymy instancje dla klasy
       //console.log('testProduct:', testProduct);  // wyswietlona w metodzie app.initMenu
     },
-
     initData: function(){         // pobieranie danych naszych produktow z dataSource
       const thisApp = this;       // this znowu, do wyjaśnienia
 
@@ -357,7 +386,14 @@
       //console.log('templates:', templates);
 
       thisApp.initData();
+      thisApp.initCart();
       thisApp.initMenu();
+    },
+    initCart: function(){  // initCart, która będzie inicjować instancję koszyka. Przekażemy jej wrapper (czyli kontener, element okalający) koszyka.
+      const thisApp = this;
+
+      const cartElem = document.querySelector(select.containerOf.cart);
+      thisApp.cart = new Cart (cartElem);
     },
   };
 
