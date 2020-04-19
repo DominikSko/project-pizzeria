@@ -349,6 +349,8 @@
 
       thisCart.products = [];  // Od razu stworzyliśmy tablicę thisCart.products, w której będziemy przechowywać produkty dodane do koszyka.
 
+      thisCart.deliveryFee = settings.cart.defaultDeliveryFee;
+
       thisCart.getElements(element);
       thisCart.initActions();
 
@@ -384,10 +386,30 @@
 
       thisCart.dom.productList.appendChild(generatedDOM); // Dodajemy te elementy DOM do thisCart.dom.productList
 
-      //thisCart.products.push(menuProduct);
+      thisCart.products.push(new CartProduct(menuProduct, generatedDOM)); // W ten sposób jednocześnie stworzymy nową instancję klasy new CartProduct oraz dodamy ją do tablicy thisCart.products.
       //console.log('thisCart.products', thisCart.products);
+      thisCart.update();
+    }
+    update(){
+      const thisCart = this;
+
+      thisCart.totalNumber = 0;
+
+      thisCart.subtotalPrice = 0;
+
+      for(let thisCartProduct of thisCart.products){
+
+        thisCart.subtotalPrice = thisCart.subtotalPrice + thisCartProduct.price;
+        console.log(thisCart.subtotalPrice);
+
+        thisCart.totalNumber = thisCart.totalNumber + thisCartProduct.amount;
+        console.log(thisCart.totalNumber);
+      }
+      thisCart.totalPrice = thisCart.subtotalPrice + thisCart.deliveryFee;
+      console.log(thisCart.totalPrice);
     }
   }
+
   class CartProduct { // klasa CartProduct, odpowiedzialna za funkcjonowanie pojedynczej pozycji w koszyku.
     constructor(menuProduct, element){
       const thisCartProduct = this;
@@ -400,9 +422,10 @@
       thisCartProduct.params = JSON.parse(JSON.stringify(menuProduct.params)); // skopiowalismy obiekt
 
       thisCartProduct.getElements(element);
+      thisCartProduct.initAmountWidget();
 
-      console.log('new CartProduct', thisCartProduct);
-      console.log('product data', menuProduct);
+      //console.log('new CartProduct', thisCartProduct);
+      //console.log('product data', menuProduct);
 
     }
     getElements(element){
@@ -416,6 +439,20 @@
       thisCartProduct.dom.edit = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.edit);
       thisCartProduct.dom.remove = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.remove);
 
+    }
+    initAmountWidget(){
+      const thisCartProduct = this;
+      // nowa metoda initAmountWidget bedzie tworzyla instacje klasy AmountWidget i zapisywala ja we wlasciowsci produktu
+      thisCartProduct.amountWidget = new AmountWidget(thisCartProduct.dom.amountWidget);
+
+      thisCartProduct.dom.amountWidget.addEventListener('updated', function(){ // dodajemy DOM znowu, do omówienia DOM skad sie bierze
+        // handler eventu
+        thisCartProduct.amount = thisCartProduct.amountWidget.value;
+        thisCartProduct.price = thisCartProduct.priceSingle * thisCartProduct.amount;
+
+        thisCartProduct.dom.price.innerHTML = thisCartProduct.price; // do omówienia dom.price.innerHTML
+
+      });
     }
   }
 
