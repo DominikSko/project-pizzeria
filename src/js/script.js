@@ -179,17 +179,18 @@
       thisProduct.cartButton.addEventListener('click', function(){  // do omówienia
         event.preventDefault();
         thisProduct.processOrder();
+        thisProduct.addToCart();
       });
 
     }
-    processOrder(){
+    processOrder(){   //  która iteruje przez wszystkie opcje wszystkich parametrów.
       const thisProduct = this;
 
       // read all data from the form (using utils.serializeFormToObject) and save it to const formData
       const formData = utils.serializeFormToObject(thisProduct.form);
       //console.log('formData', formData);
 
-      thisProduct.params = {}; // dlaczego tworzymy obiekt? nie ma go w algorytmie
+      thisProduct.params = {};
 
       // set variable price to equal thisProduct.data.price
       let price = thisProduct.data.price;
@@ -254,10 +255,14 @@
       // multiply price by amount
       // W ten sposób, tuż przed wyświetleniem ceny obliczonej z uwzględnieniem opcji,
       //pomnożymy ją przez ilość sztuk wybraną w widgecie!
-      price *= thisProduct.amountWidget.value;
+      //price *= thisProduct.amountWidget.value;
+      thisProduct.priceSingle = price;
+      thisProduct.price = thisProduct.priceSingle * thisProduct.amountWidget.value;
       // set the contents of thisProduct.priceElem to be the value of variable price
       // metoda ustawia zawartość thisProduct.priceElem na wartość zmiennej price.
-      thisProduct.priceElem.innerHTML = price;
+      thisProduct.priceElem.innerHTML = thisProduct.price;
+
+      //console.log(thisProduct.params);
     }
     initAmountWidget(){
       const thisProduct = this;
@@ -267,6 +272,16 @@
       thisProduct.amountWidgetElem.addEventListener('updated', function(){
         thisProduct.processOrder();
       });
+    }
+    addToCart(){
+      const thisProduct = this;
+
+      thisProduct.name = thisProduct.data.name;
+
+      thisProduct.value = thisProduct.amountWidget.value;
+      //console.log(thisProduct.name);
+      //console.log(thisProduct.value);
+      app.cart.add(thisProduct);   // skad odwołanie ?
     }
   }
 
@@ -354,6 +369,20 @@
       thisCart.dom.wrapper = element;
 
       thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
+      thisCart.dom.productList = document.querySelector(select.cart.productList);  // dlaczego tak definiujemy ?
+    }
+    add(menuProduct){  // Generowanie elementów DOM do koszyka
+      const thisCart = this;
+
+      console.log('adding product', menuProduct);
+
+      const generatedHTML = templates.cartProduct(menuProduct); // tworzymy kod HTML
+      console.log(generatedHTML);
+
+      const generatedDOM = utils.createDOMFromHTML(generatedHTML); // Następnie ten kod zamieniamy na elementy DOM
+      console.log(generatedDOM);
+
+      thisCart.dom.productList.appendChild(generatedDOM); // Dodajemy te elementy DOM do thisCart.dom.productList
 
     }
   }
