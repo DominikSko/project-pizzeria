@@ -275,10 +275,11 @@
     }
     addToCart(){
       const thisProduct = this;
+      console.log(thisProduct);
 
       thisProduct.name = thisProduct.data.name;
 
-      thisProduct.value = thisProduct.amountWidget.value;
+      thisProduct.amount = thisProduct.amountWidget.value;
       //console.log(thisProduct.name);
       //console.log(thisProduct.value);
       app.cart.add(thisProduct);   // skad odwołanie ?
@@ -293,8 +294,8 @@
       thisWidget.value = settings.amountWidget.defaultValue;
       thisWidget.setValue(thisWidget.input.value);
       thisWidget.initActions();
-      //console.log('AmountWidget', thisWidget);
-      //console.log('constructor arguments', element);
+      console.log('AmountWidget', thisWidget);
+      console.log('constructor arguments', element);
     }
     getElements(element){
       const thisWidget = this;
@@ -338,7 +339,9 @@
     announce(){  // Zacznijmy od stworzenia metody announce. Będzie ona tworzyła instancje klasy Event,
       const thisWidget = this;                       //  wbudowanej w silnik JS (czyli w przeglądarkę).
 
-      const event = new Event('updated');
+      const event = new CustomEvent('updated', {
+        bubbles: true    // bubbles, bąbelkowanie,  ten event po wykonaniu na jakimś elemencie będzie przekazany jego rodzicowi, oraz rodzicowi rodzica, i tak dalej – aż do samego <body>, document i window.
+      });
       thisWidget.element.dispatchEvent(event);
     }
   }
@@ -362,6 +365,16 @@
       thisCart.dom.toggleTrigger.addEventListener('click', function(){
         thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);
       });
+
+      // Nasłuchujemy tutaj na liście produktów, w której umieszczamy produkty, w których znajduje się widget liczby sztuk, który generuje ten event. Dzięki właściwości bubbles "usłyszymy" go na tej liście i możemy wtedy wykonać metodę update.
+      thisCart.dom.productList.addEventListener('updated', function(){
+        thisCart.update();
+      });
+
+      thisCart.dom.productList.addEventListener('remove', function (){  // wychwycenie eventu remove
+        thisCart.remove(event.detail.cartProduct);
+      });
+
     }
     getElements(element){   // do omówienia, bierze z wrappera element?
       const thisCart = this;
@@ -372,6 +385,13 @@
 
       thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
       thisCart.dom.productList = document.querySelector(select.cart.productList);  // dlaczego tak definiujemy ?
+
+
+      thisCart.renderTotalsKeys = ['totalNumber', 'totalPrice', 'subtotalPrice', 'deliveryFee'];
+
+      for(let key of thisCart.renderTotalsKeys){
+      thisCart.dom[key] = thisCart.dom.wrapper.querySelectorAll(select.cart[key]);
+      }
     }
     add(menuProduct){  // Generowanie elementów DOM do koszyka
       const thisCart = this;
@@ -407,6 +427,29 @@
       }
       thisCart.totalPrice = thisCart.subtotalPrice + thisCart.deliveryFee;
       console.log(thisCart.totalPrice);
+
+      for(let key of thisCart.renderTotalsKeys){
+        for(let elem of thisCart.dom[key]){
+          elem.innerHTML = thisCart[key];
+        }
+      }
+    }
+    remove(cartProduct){  //Cart.remove
+      const thisCart = this;
+
+      // zadeklarować stałą index, której wartością będzie indeks cartProduct w tablicy thisCart.products,
+      const index = thisCart.products.indexOf(cartProduct);
+      console.log(index);
+
+      // użyć metody splice do usunięcia elementu o tym indeksie z tablicy thisCart.products,
+      thisCart.products.splice(index,1);
+      console.log(thisCart.products);
+
+      // usunąć z DOM element cartProduct.dom.wrapper,
+      cartProduct.dom.wrapper.remove();
+
+      // wywołać metodę update w celu przeliczenia sum po usunięciu produktu.
+      thisCart.update();
     }
   }
 
@@ -423,6 +466,7 @@
 
       thisCartProduct.getElements(element);
       thisCartProduct.initAmountWidget();
+      thisCartProduct.initActions();
 
       //console.log('new CartProduct', thisCartProduct);
       //console.log('product data', menuProduct);
@@ -451,7 +495,33 @@
         thisCartProduct.price = thisCartProduct.priceSingle * thisCartProduct.amount;
 
         thisCartProduct.dom.price.innerHTML = thisCartProduct.price; // do omówienia dom.price.innerHTML
+      });
+    }
+    remove(){
+      const thisCartProduct = this;
 
+      const event = new CustomEvent('remove', {
+        bubbles:true,
+        detail: {
+          cartProduct: thisCartProduct,
+        },
+      });
+      console.log(event);
+
+      thisCartProduct.dom.wrapper.dispatchEvent(event);
+     // Podobnie jak w AmountWidget, wykorzystujemy tutaj CustomEvent z właściwością bubbles.
+      //Dodatkowo jednak wykorzystujemy właściwość detail. Możemy w niej przekazać dowolne informacje do handlera eventu.
+    } // W tym przypadku przekazujemy odwołanie do tej instancji, dla której kliknięto guzik usuwania.
+    initActions(){
+      const thisCartProduct = this;
+
+      thisCartProduct.dom.edit.addEventListener('click', function(event){
+        event.preventDefault();
+      });
+
+      thisCartProduct.dom.remove.addEventListener('click', function(event){
+        event.preventDefault();
+        thisCartProduct.remove();
       });
     }
   }
