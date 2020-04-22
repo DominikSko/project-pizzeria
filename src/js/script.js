@@ -71,6 +71,11 @@
     cart: {
       defaultDeliveryFee: 20,
     },
+    db: {
+      url: '//localhost:3131',
+      product: 'product',
+      order: 'order',
+    },
   };
 
   const templates = {
@@ -275,7 +280,7 @@
     }
     addToCart(){
       const thisProduct = this;
-      console.log(thisProduct);
+      //console.log(thisProduct);
 
       thisProduct.name = thisProduct.data.name;
 
@@ -294,8 +299,8 @@
       thisWidget.value = settings.amountWidget.defaultValue;
       thisWidget.setValue(thisWidget.input.value);
       thisWidget.initActions();
-      console.log('AmountWidget', thisWidget);
-      console.log('constructor arguments', element);
+      //console.log('AmountWidget', thisWidget);
+      //console.log('constructor arguments', element);
     }
     getElements(element){
       const thisWidget = this;
@@ -375,6 +380,11 @@
         thisCart.remove(event.detail.cartProduct);
       });
 
+      thisCart.dom.form.addEventListener('submit', function(){ // wysylanie zamowienia do API, guzik send order
+        event.preventDefault();
+        thisCart.sendOrder();
+      });
+
     }
     getElements(element){   // do omówienia, bierze z wrappera element?
       const thisCart = this;
@@ -386,12 +396,16 @@
       thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
       thisCart.dom.productList = document.querySelector(select.cart.productList);  // dlaczego tak definiujemy ?
 
+      thisCart.renderTotalsKeys = ['totalNumber', 'totalPrice', 'subtotalPrice', 'deliveryFee']; // do omówienia
 
-      thisCart.renderTotalsKeys = ['totalNumber', 'totalPrice', 'subtotalPrice', 'deliveryFee'];
-
-      for(let key of thisCart.renderTotalsKeys){
+      for(let key of thisCart.renderTotalsKeys){              // do omówienia
       thisCart.dom[key] = thisCart.dom.wrapper.querySelectorAll(select.cart[key]);
       }
+      // Wychwycenie submitu formularza, wysylanie zamowien do API
+      thisCart.dom.form = document.querySelector(select.cart.form);
+
+      thisCart.dom.phone = document.querySelector(select.cart.phone);
+      thisCart.dom.address = document.querySelector(select.cart.address);
     }
     add(menuProduct){  // Generowanie elementów DOM do koszyka
       const thisCart = this;
@@ -420,13 +434,13 @@
       for(let thisCartProduct of thisCart.products){
 
         thisCart.subtotalPrice = thisCart.subtotalPrice + thisCartProduct.price;
-        console.log(thisCart.subtotalPrice);
+        //console.log(thisCart.subtotalPrice);
 
         thisCart.totalNumber = thisCart.totalNumber + thisCartProduct.amount;
-        console.log(thisCart.totalNumber);
+        //console.log(thisCart.totalNumber);
       }
       thisCart.totalPrice = thisCart.subtotalPrice + thisCart.deliveryFee;
-      console.log(thisCart.totalPrice);
+      //console.log(thisCart.totalPrice);
 
       for(let key of thisCart.renderTotalsKeys){
         for(let elem of thisCart.dom[key]){
@@ -450,6 +464,46 @@
 
       // wywołać metodę update w celu przeliczenia sum po usunięciu produktu.
       thisCart.update();
+    }
+    sendOrder(){  // metoda sendorder do wysylania danych do API, przyciskiem sendorder w iniactions
+      const thisCart = this;
+      const url = settings.db.url + '/' + settings.db.order; // umieszczamy endpoint zamówienia order
+
+      const payload = {                      // deklarujemy stałą payload, czyli ładunek,
+        phone : thisCart.dom.phone,
+        address: thisCart.dom.address,            // Tak bardzo często określa się dane, które będą wysłane do serwera.
+        totalPrice : thisCart.totalPrice,
+        subtotalPrice : thisCart.subtotalPrice,
+        totalNumber : thisCart.totalNumber,
+        deliveryFee : thisCart.deliveryFee,
+        totalPrice: thisCart.totalPrice,
+        products: [], // Obiekt payload musi też zawierać tablicę products, która na razie będzie pusta
+      };
+
+      for(let oneProduct of thisCart.products){  // Pod obiektem payload dodaj pętlę iterującą po wszystkich thisCart.products, i dla każdego produktu wywołaj jego metodę getData. Wynik zwracany przez tą metodą dodaj do tablicy payload.products.
+        oneProduct.getData();
+        console.log(oneProduct);
+
+        payload.products.push(oneProduct);
+        console.log(payload.products);
+      }
+
+      const options = {            //  stała – options – zawiera opcje, które skonfigurują zapytanie
+        method: 'POST',            // zmieniamy GET na POST, która służy do wysyłania nowych danych do API
+        headers: {
+          'Content-Type': 'application/json',    // nagłówek, aby nasz serwer wiedział, że wysyłamy dane w postaci JSONa
+        },
+        body: JSON.stringify(payload),       // Ostatni z nagłówków to body, czyli treść którą wysyłamy. Używamy tutaj metody JSON.stringify
+      };                                     // aby przekonwertować obiekt payload na ciąg znaków w formacie JSON.
+
+      // wysłanie zapytania do serwera, dodalismy drugi argument options
+      fetch(url, options)
+        .then(function(response){
+          return response.json();
+        }).then(function(parsedResponse){
+          console.log('parsedResponse', parsedResponse);
+        });
+
     }
   }
 
@@ -524,6 +578,20 @@
         thisCartProduct.remove();
       });
     }
+    getData(){  // getData ma zwracać wszystkie informacje o zamawianym produkcie – id, amount, price, priceSingle oraz params
+      const thisCartProduct = this;
+
+      const productData = {
+        OrderedItems: {
+        id: thisCartProduct.id,
+        amount: thisCartProduct.amount,
+        price: thisCartProduct.price,
+        priceSingle: thisCartProduct.priceSingle,
+        params: thisCartProduct.params,
+        }
+      }
+      return productData;
+    }
   }
 
   const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplikacji
@@ -534,7 +602,9 @@
       //console.log('thisApp.data:', thisApp.data);
 
       for(let productData in thisApp.data.products){
-        new Product(productData, thisApp.data.products[productData]);
+        // new Product(productData, thisApp.data.products[productData]); // wykorzystujemy KLUCZ produktu
+        // Zamiast klucza, wykorzystamy teraz właściwość id:
+        new Product(thisApp.data.products[productData].id, thisApp.data.products[productData]); // do omówienia całe
       }
       // sprawdzamy czy dane są gotowe do uzycia poniżej, zastepujemy pętlą wyżej która iteruje po products
       //const testProduct = new Product();    //tworzymy instancje dla klasy
@@ -543,7 +613,31 @@
     initData: function(){         // pobieranie danych naszych produktow z dataSource
       const thisApp = this;       // this znowu, do wyjaśnienia
 
-      thisApp.data = dataSource;  // dlaczego zmieniamy dataSource na thisApp tj this.data ?
+      //thisApp.data = dataSource;  // dlaczego zmieniamy dataSource na thisApp tj this.data ?
+      // wrzucamy dane z API
+      thisApp.data = {};
+      console.log(thisApp.data);
+      // adres endpointu
+      const url = settings.db.url + '/' + settings.db.product;
+
+      // najciekawszy fragment, czyli wywołanie zapytania AJAX za pomocą funkcji fetch
+      fetch(url)                 // wszystko do OMÓWIENIA
+        .then(function(rawResponse){
+          return rawResponse.json();
+        })
+        .then(function(parsedResponse){
+          console.log('parsedResponse', parsedResponse);
+
+          // save parsedResponse as thisApp.data.products
+          thisApp.data.products = parsedResponse;
+
+          // execute initMenu method
+          thisApp.initMenu();
+
+        });
+      console.log('thisApp.data', JSON.stringify(thisApp.data));
+
+
     },
     init: function(){
       const thisApp = this;
@@ -555,7 +649,7 @@
 
       thisApp.initData();
       thisApp.initCart();
-      thisApp.initMenu();
+      //thisApp.initMenu();
     },
     initCart: function(){  // initCart, która będzie inicjować instancję koszyka. Przekażemy jej wrapper (czyli kontener, element okalający) koszyka.
       const thisApp = this;
