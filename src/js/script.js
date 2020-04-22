@@ -399,7 +399,7 @@
       thisCart.renderTotalsKeys = ['totalNumber', 'totalPrice', 'subtotalPrice', 'deliveryFee']; // do omówienia
 
       for(let key of thisCart.renderTotalsKeys){              // do omówienia
-      thisCart.dom[key] = thisCart.dom.wrapper.querySelectorAll(select.cart[key]);
+        thisCart.dom[key] = thisCart.dom.wrapper.querySelectorAll(select.cart[key]);
       }
       // Wychwycenie submitu formularza, wysylanie zamowien do API
       thisCart.dom.form = document.querySelector(select.cart.form);
@@ -476,7 +476,6 @@
         subtotalPrice : thisCart.subtotalPrice,
         totalNumber : thisCart.totalNumber,
         deliveryFee : thisCart.deliveryFee,
-        totalPrice: thisCart.totalPrice,
         products: [], // Obiekt payload musi też zawierać tablicę products, która na razie będzie pusta
       };
 
@@ -563,7 +562,7 @@
       console.log(event);
 
       thisCartProduct.dom.wrapper.dispatchEvent(event);
-     // Podobnie jak w AmountWidget, wykorzystujemy tutaj CustomEvent z właściwością bubbles.
+      // Podobnie jak w AmountWidget, wykorzystujemy tutaj CustomEvent z właściwością bubbles.
       //Dodatkowo jednak wykorzystujemy właściwość detail. Możemy w niej przekazać dowolne informacje do handlera eventu.
     } // W tym przypadku przekazujemy odwołanie do tej instancji, dla której kliknięto guzik usuwania.
     initActions(){
@@ -583,13 +582,13 @@
 
       const productData = {
         OrderedItems: {
-        id: thisCartProduct.id,
-        amount: thisCartProduct.amount,
-        price: thisCartProduct.price,
-        priceSingle: thisCartProduct.priceSingle,
-        params: thisCartProduct.params,
+          id: thisCartProduct.id,
+          amount: thisCartProduct.amount,
+          price: thisCartProduct.price,
+          priceSingle: thisCartProduct.priceSingle,
+          params: thisCartProduct.params,
         }
-      }
+      };
       return productData;
     }
   }
