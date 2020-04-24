@@ -1,7 +1,12 @@
 eslint in json line:
 
-"test:js": "eslint src/js/",
+	"test:js": "eslint src/js/",
 
 równiez usuniête z jsona :
 
-"test:js": "eslint --fix src/js/",
+	"test:js": "eslint --fix src/js/",
+
+komentarz dla eslinta usuniêty z app.js
+
+	/* global Handlebars, utils, dataSource */ // eslint-disable-line no-unused-vars
+	usuniête równie¿ nawiasy klamrowe okalaj¹cy caly script oraz 'use strict';
