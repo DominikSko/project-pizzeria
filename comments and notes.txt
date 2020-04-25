@@ -10,3 +10,7 @@ komentarz dla eslinta usuniêty z app.js
 
 	/* global Handlebars, utils, dataSource */ // eslint-disable-line no-unused-vars
 	usuniête równie¿ nawiasy klamrowe okalaj¹cy caly script oraz 'use strict';
+
+removed  from stylelintrc.json
+
+"scss/at-extend-no-missing-placeholder": true,

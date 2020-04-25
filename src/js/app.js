@@ -1,7 +1,7 @@
 
 import {Product} from './components/Product.js';
 import {Cart} from './components/Cart.js';
-import {select, settings} from './settings.js';
+import {select, settings, classNames} from './settings.js';
 
 const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplikacji
   initMenu: function(){          // deklarację metody
@@ -18,6 +18,42 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
     // sprawdzamy czy dane są gotowe do uzycia poniżej, zastepujemy pętlą wyżej która iteruje po products
     //const testProduct = new Product();    //tworzymy instancje dla klasy
     //console.log('testProduct:', testProduct);  // wyswietlona w metodzie app.initMenu
+  },
+  initPages: function(){
+    //znajdziemy wszystkie dzieci tego kontenera za pomocą .children. W ten sposób uzyskamy kolekcję wrapperów podstron.
+    // thisApp.pages nie będziemy mieli zapisanej kolekcji elementów, ale tablicę (array) zawierającą elementy.
+    thisApp.pages = Array.from(document.querySelector(select.containerOf.pages).children);
+
+    // zapiszemy jeszcze tablicę linków do podstron
+    thisApp.navLinks = Array.from(document.querySelectorAll(select.nav.links));
+
+    // znajdujaca sie podstrona pod indeksem 0, wywolanie metody z atrybutem id
+    thisApp.activatePage(thisApp.pages[0].id);
+    // nie musimy używać metody getAttribute. Wystarczy odwołać się do właściwości id tego elementu.
+
+    for(let link of thisApp.navLinks){
+      link.addEventListener('click', function(event){
+        const clickedElement = this;
+        event.preventDefault();
+
+        // get page id from href
+        const id = clickedElement.getAttribute('href').replace('#', '');
+
+        // activate page
+        thisApp.activatePage(id);
+      });
+    }
+
+  },
+  activatePage: function(pageId){
+    const thisApp = this;
+
+    for(let link of thisApp.navLinks){
+      link.classList.toggle(classNames.nav.active, link.getAttribute('href') == '#' + pageId);
+    }
+    for(let page of thisApp.pages){
+      page.classList.toggle(classNames.pages.active, page.id = pageId);
+    }
   },
   initData: function(){         // pobieranie danych naszych produktow z dataSource
     const thisApp = this;       // this znowu, do wyjaśnienia
