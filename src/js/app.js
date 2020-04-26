@@ -1,6 +1,7 @@
 
 import {Product} from './components/Product.js';
 import {Cart} from './components/Cart.js';
+import {Booking} from './components/Booking.js';
 import {select, settings, classNames} from './settings.js';
 
 const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplikacji
@@ -63,11 +64,11 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
 
     for(let link of thisApp.navLinks){
       link.classList.toggle(classNames.nav.active, link.getAttribute('href') == '#' + pageId);
-      console.log(link);
+      //console.log(link);
     }
     for(let page of thisApp.pages){
       page.classList.toggle(classNames.pages.active, page.id = pageId);
-      console.log(page);
+      //console.log(page);
     }
   },
   initData: function(){         // pobieranie danych naszych produktow z dataSource
@@ -109,6 +110,7 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
     thisApp.initData();
     thisApp.initCart();
     thisApp.initPages();
+    thisApp.initBooking();
     //thisApp.initMenu();
   },
   initCart: function(){  // initCart, która będzie inicjować instancję koszyka. Przekażemy jej wrapper (czyli kontener, element okalający) koszyka.
@@ -123,6 +125,13 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
     thisApp.productList.addEventListener('add-to-cart', function(event){   // do omówienia
       app.cart.add(event.detail.product);
     });
+  },
+  initBooking: function(){
+    const thisApp = this;
+
+    thisApp.widget = document.querySelector(select.containerOf.booking);
+
+    thisApp.booking = new Booking (thisApp.widget);
   },
 };
 
