@@ -42,8 +42,8 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
         return page.id == idFromHash;             // do omówienia całość
       });
     }
-    // do omówienia
-    //thisApp.activatePage(pagesMatchingHash.length ? pagesMatchingHash[0].id : thisApp.pages[0].id);
+    // do omówienia, dlaczego to juest odpowiedzialne ze strona zostaje po przeładowaniu ?
+    thisApp.activatePage(pagesMatchingHash.length ? pagesMatchingHash[0].id : thisApp.pages[0].id);
 
     for (let link of thisApp.navLinks) {
       link.addEventListener('click', function (event) {
@@ -118,11 +118,12 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
     });
   },
   initBooking: function(){
-    const thisApp = this;
+    //const thisApp = this;
 
-    thisApp.bookingContainer = document.querySelector(select.containerOf.booking);
+    const widgetContainer = document.querySelector(select.containerOf.booking);
 
-    thisApp.booking = new Booking(thisApp.bookingContainer);
+    new Booking(widgetContainer);
+    //thisApp.booking = new Booking(thisApp.bookingContainer);
   },
   init: function(){
     const thisApp = this;

@@ -21,14 +21,17 @@ export class Booking {
     // zapisać do tego obiektu właściwość wrapper równą otrzymanemu argumentowi,
     thisBooking.dom.wrapper = element;
 
+    // //zawartość wrappera zamieniać na kod HTML wygenerowany z szablonu,
+    thisBooking.dom.wrapper.innerHTML = generatedHTML; // tu był błąd
+
     //zawartość wrappera zamieniać na kod HTML wygenerowany z szablonu
-    thisBooking.generatedDOM = utils.createDOMFromHTML(generatedHTML);  // do omówienia , dlaczego nie thisBooking.... = generatedHTML;?
+    //thisBooking.generatedDOM = utils.createDOMFromHTML(generatedHTML);  // do omówienia , dlaczego nie thisBooking.... = generatedHTML;?
 
     // we właściwości thisBooking.dom.peopleAmount zapisywać pojedynczy element znaleziony we wrapperze i pasujący do selektora
-    thisBooking.dom.peopleAmount = thisBooking.generatedDOM.querySelector(select.booking.peopleAmount);
+    thisBooking.dom.peopleAmount = element.querySelector(select.booking.peopleAmount);
 
     // analogicznie do peopleAmount znaleźć i zapisać element dla hoursAmount.
-    thisBooking.dom.hoursAmount = thisBooking.generatedDOM.querySelector(select.booking.hoursAmount);
+    thisBooking.dom.hoursAmount = element.querySelector(select.booking.hoursAmount);
 
   }
   initWidgets(){
@@ -38,6 +41,5 @@ export class Booking {
     // którym jako argument przekazujemy odpowiednie właściwości z obiektu thisBooking.dom.
     thisBooking.peopleAmount = new AmountWidget(thisBooking.dom.peopleAmount);
     thisBooking.hoursAmount = new AmountWidget(thisBooking.dom.hoursAmount);
-
   }
 }
