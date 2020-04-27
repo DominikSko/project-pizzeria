@@ -2,7 +2,7 @@
 import {Product} from './components/Product.js';
 import {Cart} from './components/Cart.js';
 import {Booking} from './components/Booking.js';
-import {select, settings, classNames} from './settings.js';
+import {select, settings, classNames } from './settings.js';
 
 const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplikacji
   initMenu: function(){          // deklarację metody
@@ -25,7 +25,7 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
     //znajdziemy wszystkie dzieci tego kontenera za pomocą .children. W ten sposób uzyskamy kolekcję wrapperów podstron.
     // thisApp.pages nie będziemy mieli zapisanej kolekcji elementów, ale tablicę (array) zawierającą elementy.
     thisApp.pages = Array.from(document.querySelector(select.containerOf.pages).children);
-    console.log(thisApp.pages);
+    //console.log(thisApp.pages);
 
     // zapiszemy jeszcze tablicę linków do podstron
     thisApp.navLinks = Array.from(document.querySelectorAll(select.nav.links));
@@ -35,41 +35,46 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
     // nie musimy używać metody getAttribute. Wystarczy odwołać się do właściwości id tego elementu.
     let pagesMatchingHash = [];
 
-    if (window.location.hash.length > 2) {           // do omówienia całość
+    if (window.location.hash.length > 2) {         // do omówienia całość
       const idFromHash = window.location.hash.replace('#/', '');
 
-      pagesMatchingHash = thisApp.pages.filter(function (page) {
-        return page.id == idFromHash;                 // do omówienia całość
+      pagesMatchingHash = thisApp.pages.filter(function(page) {
+        return page.id == idFromHash;             // do omówienia całość
       });
     }
     // do omówienia
-    thisApp.activatePage(pagesMatchingHash.length ? pagesMatchingHash[0].id : thisApp.pages[0].id);
+    //thisApp.activatePage(pagesMatchingHash.length ? pagesMatchingHash[0].id : thisApp.pages[0].id);
 
-    for(let link of thisApp.navLinks){
-      link.addEventListener('click', function(event){
+    for (let link of thisApp.navLinks) {
+      link.addEventListener('click', function (event) {
         const clickedElement = this;
         event.preventDefault();
 
         // get page id from href
-        const id = clickedElement.getAttribute('href').replace('#', '');
+        const pageId = clickedElement.getAttribute('href');
+        const href = pageId.replace('#', '');
 
         // activate page
-        thisApp.activatePage(id);
+        thisApp.activatePage(href);
       });
     }
 
   },
-  activatePage: function(pageId){
+  activatePage: function(pageId){  // do omówienia
     const thisApp = this;
 
-    for(let link of thisApp.navLinks){
-      link.classList.toggle(classNames.nav.active, link.getAttribute('href') == '#' + pageId);
+    for (let link of thisApp.navLinks) {
+      link.classList.toggle(classNames.nav.active, link.getAttribute('href') == '#' + pageId);   // do omówienia
       //console.log(link);
     }
-    for(let page of thisApp.pages){
-      page.classList.toggle(classNames.pages.active, page.id = pageId);
+    for (let page of thisApp.pages) {
+      page.classList.toggle(classNames.nav.active, page.getAttribute('id') == pageId);   // do omówienia
       //console.log(page);
     }
+    // Dlatego wprowadzimy kolejną, bardzo przydatną funkcjonalność! Zmiana podstrony będzie zmieniać URL strony, a po odświeżeniu aktywna będzie strona, która jest podana w adresie.
+    window.location.hash = '#/' + pageId;
+
+
   },
   initData: function(){         // pobieranie danych naszych produktow z dataSource
     const thisApp = this;       // this znowu, do wyjaśnienia
@@ -99,20 +104,6 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
     console.log('thisApp.data', JSON.stringify(thisApp.data));
 
   },
-  init: function(){
-    const thisApp = this;
-    //console.log('*** App starting ***');
-    //console.log('thisApp:', thisApp);
-    //console.log('classNames:', classNames);
-    //console.log('settings:', settings);
-    //console.log('templates:', templates);
-
-    thisApp.initData();
-    thisApp.initCart();
-    thisApp.initPages();
-    thisApp.initBooking();
-    //thisApp.initMenu();
-  },
   initCart: function(){  // initCart, która będzie inicjować instancję koszyka. Przekażemy jej wrapper (czyli kontener, element okalający) koszyka.
     const thisApp = this;
 
@@ -129,9 +120,23 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
   initBooking: function(){
     const thisApp = this;
 
-    thisApp.widget = document.querySelector(select.containerOf.booking);
+    thisApp.bookingContainer = document.querySelector(select.containerOf.booking);
 
-    thisApp.booking = new Booking (thisApp.widget);
+    thisApp.booking = new Booking(thisApp.bookingContainer);
+  },
+  init: function(){
+    const thisApp = this;
+    //console.log('*** App starting ***');
+    //console.log('thisApp:', thisApp);
+    //console.log('classNames:', classNames);
+    //console.log('settings:', settings);
+    //console.log('templates:', templates);
+
+    thisApp.initData();
+    thisApp.initCart();
+    thisApp.initPages();
+    thisApp.initBooking();
+    //thisApp.initMenu();
   },
 };
 

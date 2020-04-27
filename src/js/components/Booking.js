@@ -1,18 +1,17 @@
 
-import { select, templates} from '../settings.js';
-import { utils } from '../utils.js';
-import { AmountWidget } from './AmountWidget.js';
+import {select, templates} from '../settings.js';
+import {utils} from '../utils.js';
+import {AmountWidget} from './AmountWidget.js';
 
 export class Booking {
-  constructor (){
+  constructor(element) {
     const thisBooking = this;
 
-    thisBooking.render();
+    thisBooking.render(element);
     thisBooking.initWidgets();
   }
   render(element){
     const thisBooking = this;
-
     // generowanie HTML za pomocą szablonu templates.bookingWidget
     const generatedHTML = templates.bookingWidget();
 
