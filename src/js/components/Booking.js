@@ -1,6 +1,5 @@
 
 import {select, templates} from '../settings.js';
-import {utils} from '../utils.js';
 import {AmountWidget} from './AmountWidget.js';
 
 export class Booking {
@@ -23,9 +22,7 @@ export class Booking {
 
     // //zawartość wrappera zamieniać na kod HTML wygenerowany z szablonu,
     thisBooking.dom.wrapper.innerHTML = generatedHTML; // tu był błąd
-
-    //zawartość wrappera zamieniać na kod HTML wygenerowany z szablonu
-    //thisBooking.generatedDOM = utils.createDOMFromHTML(generatedHTML);  // do omówienia , dlaczego nie thisBooking.... = generatedHTML;?
+    // inner HTML podmienia tresc elementu
 
     // we właściwości thisBooking.dom.peopleAmount zapisywać pojedynczy element znaleziony we wrapperze i pasujący do selektora
     thisBooking.dom.peopleAmount = element.querySelector(select.booking.peopleAmount);

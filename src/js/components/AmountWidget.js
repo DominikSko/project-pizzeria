@@ -1,62 +1,50 @@
 
 import {settings, select} from '../settings.js';
+import {BaseWidget} from './BaseWidget.js';
 
-export class AmountWidget{      // do omówienia
-  constructor(element){
+export class AmountWidget extends BaseWidget{      //dziedziczenie klas, dodaliśmy informację, że jest ona rozszerzeniem klasy BaseWidget,
+  constructor(wrapper){
+
+    super(wrapper, settings.amountWidget.defaultValue); // wywołania funkcji super. Pod tą nazwą kryje się konstruktor klasy BaseWidget. Właśnie dlatego podaliśmy mu dwa argumenty: element który jest wrapperem widgetu, oraz domyślną wartość odczytaną z obiektu settings.
+
     const thisWidget = this;
 
-    thisWidget.getElements(element);
-    thisWidget.value = settings.amountWidget.defaultValue;
-    thisWidget.setValue(thisWidget.input.value);
+    thisWidget.getElements();
     thisWidget.initActions();
+    //thisWidget.value = settings.amountWidget.defaultValue;
+    //thisWidget.setValue(thisWidget.input.value);
     //console.log('AmountWidget', thisWidget);
     //console.log('constructor arguments', element);
   }
-  getElements(element){
+  getElements(){  // Nie musimy też przekazywać argumentu metodzie getElements, ponieważ super (czyli konstruktor klasy BaseWidget) już zapisał argument wrapper we właściwości thisWidget.dom.wrapper.
     const thisWidget = this;
 
-    thisWidget.element = element;
-    thisWidget.input = thisWidget.element.querySelector(select.widgets.amount.input);
-    thisWidget.linkDecrease = thisWidget.element.querySelector(select.widgets.amount.linkDecrease);
-    thisWidget.linkIncrease = thisWidget.element.querySelector(select.widgets.amount.linkIncrease);
+    thisWidget.dom.input = thisWidget.dom.wrapper.querySelector(select.widgets.amount.input);
+    thisWidget.dom.linkDecrease = thisWidget.dom.wrapper.querySelector(select.widgets.amount.linkDecrease);
+    thisWidget.dom.linkIncrease = thisWidget.dom.wrapper.querySelector(select.widgets.amount.linkIncrease);
   }
-  setValue(value){
-    const thisWidget = this;
-
-    const newValue = parseInt(value);
-
-    // walidacja DO OMÓWIENIA NEWVALUE ?
-    if (newValue != thisWidget.value && newValue >= settings.amountWidget.defaultMin && newValue <= settings.amountWidget.defaultMax) {
-      thisWidget.value = newValue;
-      thisWidget.announce();
-    }
-
-    thisWidget.input.value = thisWidget.value;
-    // Na razie ta metoda tylko zapisuje we właściwości thisWidget.value wartość przekazanego argumentu,
-    //po przekonwertowaniu go na liczbę. Robimy to na wypadek, gdyby argument był tekstem – a tak właśnie będzie
-    //w przypadku odczytania wartości inputa.
+  isValid(newValue){   // W metodzie isValid chcemy sprawdzić, czy ustawiana wartość jest poprawna.
+    // Ta metoda ma zwrócić prawdę lub fałsz, więc po słowie return wpisujemy warunek – jest to funkcja isNaN (wbudowana w przeglądarkę), która zwraca prawdę, jeśli przekazano jej wartość NaN. Zanegowaliśmy tę funkcję za pomocą wykrzyknika !, ponieważ chcemy aby prawda oznaczała "to nie jest NaN".
+    return !isNaN(newValue) && newValue >= settings.amountWidget.defaultMin && newValue <= settings.amountWidget.defaultMax;
   }
   initActions(){
     const thisWidget = this;
 
-    thisWidget.input.addEventListener('change', function(){  // do omówienia
-      thisWidget.setValue(thisWidget.input.value);
+    thisWidget.dom.input.addEventListener('change', function(){  // do omówienia
+      thisWidget.value = thisWidget.dom.input.value;
     });
-    thisWidget.linkDecrease.addEventListener('click', function(event){  // do omówienia
+    thisWidget.dom.linkDecrease.addEventListener('click', function(event){  // do omówienia
       event.preventDefault();
-      thisWidget.setValue(thisWidget.value - 1);
+      thisWidget.value--;
     });
-    thisWidget.linkIncrease.addEventListener('click', function(event){  // do omówienia
+    thisWidget.dom.linkIncrease.addEventListener('click', function(event){  // do omówienia
       event.preventDefault();
-      thisWidget.setValue(thisWidget.value + 1);
+      thisWidget.value++;
     });
   }
-  announce(){  // Zacznijmy od stworzenia metody announce. Będzie ona tworzyła instancje klasy Event,
-    const thisWidget = this;                       //  wbudowanej w silnik JS (czyli w przeglądarkę).
+  renderValue() {
+    const thisWidget = this;
 
-    const event = new CustomEvent('updated', {
-      bubbles: true    // bubbles, bąbelkowanie,  ten event po wykonaniu na jakimś elemencie będzie przekazany jego rodzicowi, oraz rodzicowi rodzica, i tak dalej – aż do samego <body>, document i window.
-    });
-    thisWidget.element.dispatchEvent(event);
+    thisWidget.dom.input.value = thisWidget.value;
   }
 }

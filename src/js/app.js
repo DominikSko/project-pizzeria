@@ -1,8 +1,8 @@
 
-import {Product} from './components/Product.js';
-import {Cart} from './components/Cart.js';
-import {Booking} from './components/Booking.js';
-import {select, settings, classNames } from './settings.js';
+import { Booking } from './components/Booking.js';
+import { Cart } from './components/Cart.js';
+import { Product } from './components/Product.js';
+import { classNames, select, settings } from './settings.js';
 
 const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplikacji
   initMenu: function(){          // deklarację metody
@@ -72,7 +72,7 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
       //console.log(page);
     }
     // Dlatego wprowadzimy kolejną, bardzo przydatną funkcjonalność! Zmiana podstrony będzie zmieniać URL strony, a po odświeżeniu aktywna będzie strona, która jest podana w adresie.
-    window.location.hash = '#/' + pageId;
+    window.location.hash = '#/' + pageId;  // location pole w przegladarce na link, hash to hash pod kiniec linku #/booking
 
 
   },
