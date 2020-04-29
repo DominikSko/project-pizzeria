@@ -61,11 +61,11 @@ utils.hourToNumber = function(hour){
   return parseInt(parts[0]) + parseInt(parts[1])/60;
 };
 
-utils.dateToStr = function(dateObj){
+utils.dateToStr = function(dateObj){           // utils.dateToStr przekształca obiekt daty na tekst w formacie rok-miesiąc-dzień, czyli np. '2019-12-31'.
   return dateObj.toISOString().slice(0, 10);
 };
 
-utils.addDays = function(dateStr, days){
+utils.addDays = function(dateStr, days){       // utils.addDays – przyjmuje ona dwa argumenty: datę do której ma dodać ilość dni, oraz ilość dni która ma być dodana.
   const dateObj = new Date(dateStr);
   dateObj.setDate(dateObj.getDate() + days);
   return dateObj;

@@ -23,7 +23,6 @@ export class BaseWidget{                     // klasa będzie szablonem, wedle k
       thisWidget.correctValue = newValue;
       thisWidget.announce();
     }
-
     thisWidget.renderValue();
   }
   parseValue(newValue){      // wbudowana w przegladarke parseInt, Poradzi sobie np. z tekstem '5szt.' i zwróci liczbę 5. Jeśli nie uda jej się skonwertować argumentu, którym będzie np. tekst 'jeden', to zwróci wartość NaN, czyli Not a Number.
@@ -36,7 +35,7 @@ export class BaseWidget{                     // klasa będzie szablonem, wedle k
   renderValue(){        // Klasa BaseWidget nie ma pojęcia o strukturze DOM widgetu, więc tylko wyświetli swoją wartość w konsoli.
     const thisWidget = this;
 
-    console.log('widget value:', thisWidget.value);
+    //console.log('widget value:', thisWidget.value);
   }
   announce(){     // jak announce w AmountWidget Zmieni się tylko element na którym wywołujemy event.
     const thisWidget = this;
@@ -47,7 +46,7 @@ export class BaseWidget{                     // klasa będzie szablonem, wedle k
 
     thisWidget.dom.wrapper.dispatchEvent(event);
   }
-
   // Przeczytaj jeszcze raz kod całej klasy, którą przed chwilą stworzyliśmy. Jak widzisz, jest to okrojona wersja klasy AmountWidget z kilkoma zmianami. Ta klasa wie tylko, że posiada jakiś wrapper i ma mieć swoją wartość value.
   // Dzięki temu przy próbie zmiany wartości, setter sprawdzi czy jest to poprawna wartość i różni się od wcześniejszej. Jeśli tak, to zostanie wywołany event informujący inne obiekty o zmianie wartości.
+
 }

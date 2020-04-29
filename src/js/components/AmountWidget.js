@@ -23,21 +23,23 @@ export class AmountWidget extends BaseWidget{      //dziedziczenie klas, dodali�
     thisWidget.dom.linkDecrease = thisWidget.dom.wrapper.querySelector(select.widgets.amount.linkDecrease);
     thisWidget.dom.linkIncrease = thisWidget.dom.wrapper.querySelector(select.widgets.amount.linkIncrease);
   }
-  isValid(newValue){   // W metodzie isValid chcemy sprawdzić, czy ustawiana wartość jest poprawna.
+  isValid(newValue) {   // W metodzie isValid chcemy sprawdzić, czy ustawiana wartość jest poprawna.
     // Ta metoda ma zwrócić prawdę lub fałsz, więc po słowie return wpisujemy warunek – jest to funkcja isNaN (wbudowana w przeglądarkę), która zwraca prawdę, jeśli przekazano jej wartość NaN. Zanegowaliśmy tę funkcję za pomocą wykrzyknika !, ponieważ chcemy aby prawda oznaczała "to nie jest NaN".
     return !isNaN(newValue) && newValue >= settings.amountWidget.defaultMin && newValue <= settings.amountWidget.defaultMax;
   }
-  initActions(){
+  initActions() {
     const thisWidget = this;
 
-    thisWidget.dom.input.addEventListener('change', function(){  // do omówienia
+    thisWidget.dom.input.addEventListener('change', function () {
       thisWidget.value = thisWidget.dom.input.value;
     });
-    thisWidget.dom.linkDecrease.addEventListener('click', function(event){  // do omówienia
+
+    thisWidget.dom.linkDecrease.addEventListener('click', function (event) {
       event.preventDefault();
       thisWidget.value--;
     });
-    thisWidget.dom.linkIncrease.addEventListener('click', function(event){  // do omówienia
+
+    thisWidget.dom.linkIncrease.addEventListener('click', function (event) {
       event.preventDefault();
       thisWidget.value++;
     });

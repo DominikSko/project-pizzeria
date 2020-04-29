@@ -29,6 +29,7 @@ export class Booking {
 
     // analogicznie do peopleAmount znaleźć i zapisać element dla hoursAmount.
     thisBooking.dom.hoursAmount = element.querySelector(select.booking.hoursAmount);
+    thisBooking.dom.datePicker = element.querySelector(select.widgets.datePicker.wrapper);
 
   }
   initWidgets(){
@@ -38,5 +39,6 @@ export class Booking {
     // którym jako argument przekazujemy odpowiednie właściwości z obiektu thisBooking.dom.
     thisBooking.peopleAmount = new AmountWidget(thisBooking.dom.peopleAmount);
     thisBooking.hoursAmount = new AmountWidget(thisBooking.dom.hoursAmount);
+    thisBooking.datePicker = new AmountWidget(thisBooking.dom.datePicker);
   }
 }
