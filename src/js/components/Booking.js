@@ -1,6 +1,7 @@
 
 import {select, templates} from '../settings.js';
 import {AmountWidget} from './AmountWidget.js';
+import {DatePicker} from './DatePicker.js';
 
 export class Booking {
   constructor(element) {
@@ -39,6 +40,6 @@ export class Booking {
     // którym jako argument przekazujemy odpowiednie właściwości z obiektu thisBooking.dom.
     thisBooking.peopleAmount = new AmountWidget(thisBooking.dom.peopleAmount);
     thisBooking.hoursAmount = new AmountWidget(thisBooking.dom.hoursAmount);
-    thisBooking.datePicker = new AmountWidget(thisBooking.dom.datePicker);
+    thisBooking.datePicker = new DatePicker(thisBooking.dom.datePicker);
   }
 }

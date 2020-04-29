@@ -1,9 +1,14 @@
+/*global flatpickr*/
+
+import {BaseWidget} from './BaseWidget.js';
+import {utils} from '../utils.js';
+import {select,settings} from '../settings.js';
 
 export class DatePicker extends BaseWidget {
   constructor(wrapper){
-    const thisWidget = this;
-
     super(wrapper, utils.dateToStr(new Date())); //wywolanie constructora basewidgeta
+
+    const thisWidget = this;
 
     thisWidget.dom.input = wrapper.querySelector(select.widgets.datePicker.input);
 
@@ -13,12 +18,12 @@ export class DatePicker extends BaseWidget {
     const thisWidget = this;
 
     thisWidget.minDate = new Date(thisWidget.value);
-    thisWidget.maxDate = new Date(utils.addDays(thisWidget.minDate, settings.datePicker.maxDaysInFuture));  // do omówienia!
+    thisWidget.maxDate = new Date(utils.addDays(thisWidget.minDate, settings.datePicker.maxDaysInFuture));   // do omówienia!
 
-    thisWidget.flatpickr(thisWidget.dom.input, {
-      defaultDate: thisWidget.minDate,
+    flatpickr(thisWidget.dom.input, {
       minDate: thisWidget.minDate,
       maxDate: thisWidget.maxDate,
+      defaultDate: thisWidget.minDate,
       "disable": [
         function(date) {         // funkcja blokuje poniedzialek np, https://flatpickr.js.org/examples/#disabling-dates-by-a-function
             // return true to disable
@@ -32,7 +37,6 @@ export class DatePicker extends BaseWidget {
       onChange: function (selectedDates, dateStr) {    // w momencie wykrycia zmiany wartości przez plugin, chcemy ustawiać wartość właściwości thisWidget.value na dateStr
         thisWidget.value = dateStr;
       },
-
     }); // Ogólna składania uruchomienia tego pluginu wygląda następująco: flatpickr(element, options damy sobie w obiekcie {});
 
   }

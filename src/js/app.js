@@ -1,3 +1,4 @@
+/* global $*/
 
 import { Booking } from './components/Booking.js';
 import { Cart } from './components/Cart.js';

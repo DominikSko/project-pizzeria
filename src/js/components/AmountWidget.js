@@ -2,7 +2,7 @@
 import {settings, select} from '../settings.js';
 import {BaseWidget} from './BaseWidget.js';
 
-export class AmountWidget extends BaseWidget{      //dziedziczenie klas, dodaliśmy informację, że jest ona rozszerzeniem klasy BaseWidget,
+export class AmountWidget extends BaseWidget {     //dziedziczenie klas, dodaliśmy informację, że jest ona rozszerzeniem klasy BaseWidget,
   constructor(wrapper){
 
     super(wrapper, settings.amountWidget.defaultValue); // wywołania funkcji super. Pod tą nazwą kryje się konstruktor klasy BaseWidget. Właśnie dlatego podaliśmy mu dwa argumenty: element który jest wrapperem widgetu, oraz domyślną wartość odczytaną z obiektu settings.
