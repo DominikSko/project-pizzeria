@@ -35,7 +35,7 @@ export class BaseWidget{                     // klasa będzie szablonem, wedle k
   renderValue(){        // Klasa BaseWidget nie ma pojęcia o strukturze DOM widgetu, więc tylko wyświetli swoją wartość w konsoli.
     const thisWidget = this;
 
-    //console.log('widget value:', thisWidget.value);
+    console.log('widget value:', thisWidget.value);
   }
   announce(){     // jak announce w AmountWidget Zmieni się tylko element na którym wywołujemy event.
     const thisWidget = this;

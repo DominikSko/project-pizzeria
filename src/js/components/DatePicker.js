@@ -24,15 +24,15 @@ export class DatePicker extends BaseWidget {
       minDate: thisWidget.minDate,
       maxDate: thisWidget.maxDate,
       defaultDate: thisWidget.minDate,
-      "disable": [
+      'disable': [
         function(date) {         // funkcja blokuje poniedzialek np, https://flatpickr.js.org/examples/#disabling-dates-by-a-function
-            // return true to disable
-            //return (date.getDay() === 0 || date.getDay() === 6);
-            return (date.getDay() === 1);
+          // return true to disable
+          //return (date.getDay() === 0 || date.getDay() === 6);
+          return (date.getDay() === 1);
         }
       ],
-      "locale": {
-        "firstDayOfWeek": 1 // start week on Monday
+      'locale': {
+        'firstDayOfWeek': 1 // start week on Monday
       },
       onChange: function (selectedDates, dateStr) {    // w momencie wykrycia zmiany wartości przez plugin, chcemy ustawiać wartość właściwości thisWidget.value na dateStr
         thisWidget.value = dateStr;
