@@ -169,8 +169,9 @@ export class Booking {
 
     //console.log('updated dom');
 
+    //aktualna data i godzina
     thisBooking.date = thisBooking.datePicker.value;
-    thisBooking.hour = utils.hourToNumber(thisBooking.hourPicker.value); //aktualne data i h
+    thisBooking.hour = utils.hourToNumber(thisBooking.hourPicker.value);
 
     for (let table of thisBooking.dom.tables) {
       let tableNr = table.getAttribute(settings.booking.tableIdAttribute);
@@ -179,11 +180,14 @@ export class Booking {
         tableNr = parseInt(tableNr);
       }
 
-      if (typeof thisBooking.booked[thisBooking.date] !== 'undefined' && typeof thisBooking.booked[thisBooking.date][thisBooking.hour] !== 'undefined' && thisBooking.booked[thisBooking.date][thisBooking.hour].indexOf(tableNr) > -1) {
+      if (typeof thisBooking.booked[thisBooking.date] !== 'undefined'
+      && typeof thisBooking.booked[thisBooking.date][thisBooking.hour] !== 'undefined'
+      && thisBooking.booked[thisBooking.date][thisBooking.hour].indexOf(tableNr) > -1) {
+
         table.classList.add(classNames.booking.tableBooked);
       } else {
         table.classList.remove(classNames.booking.tableBooked);
-        table.classList.remove(classNames.booking.tableChoosed);
+        //table.classList.remove(classNames.booking.tableChoosed);
       }
 
       //miejsce w ktorym mam potrzebne rzeczy
