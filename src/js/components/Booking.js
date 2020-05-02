@@ -1,5 +1,5 @@
 
-import {select, templates, settings} from '../settings.js';
+import {select, templates, settings, classNames} from '../settings.js';
 import {utils} from '../utils.js';
 import {AmountWidget} from './AmountWidget.js';
 import {DatePicker} from './DatePicker.js';
@@ -36,6 +36,8 @@ export class Booking {
     thisBooking.dom.datePicker = element.querySelector(select.widgets.datePicker.wrapper);
     thisBooking.dom.hourPicker = element.querySelector(select.widgets.hourPicker.wrapper);
 
+    thisBooking.dom.tables = element.querySelectorAll(select.booking.tables);
+
   }
   initWidgets(){
     const thisBooking = this;
@@ -46,6 +48,11 @@ export class Booking {
     thisBooking.hoursAmount = new AmountWidget(thisBooking.dom.hoursAmount);
     thisBooking.datePicker = new DatePicker(thisBooking.dom.datePicker);
     thisBooking.hourPicker = new HourPicker(thisBooking.dom.hourPicker);
+
+    // W metodzie initWidgets dodaj dla wrappera listener eventu updated, którego handler wywołuje metodę updateDOM.
+    thisBooking.dom.wrapper.addEventListener('updated', function () {
+      thisBooking.updateDOM();
+    });
 
   }
   getData(){
@@ -127,6 +134,8 @@ export class Booking {
     }
     console.log('thisBooking.booked', thisBooking.booked);
 
+    // komunikat updateDOM nie wyświetla się jednak, jeśli po odświeżeniu strony nie zmienimy daty ani godziny. Aby temu zaradzić, dodaj wywołanie metody updateDOM na końcu metody parseData.
+    thisBooking.updateDOM();
 
   }
   makeBooked(date, hour, duration, table) {           // do omowienia całe
@@ -144,6 +153,32 @@ export class Booking {
         //console.log('thisBooking.booked[date][hourBlock]: ', thisBooking.booked[date][hourBlock]);
       }
       thisBooking.booked[date][hourBlock].push(table);
+    }
+  }
+  updateDOM() {   // do omowienia całe
+    const thisBooking = this;
+
+    console.log('updated dom');
+
+    thisBooking.date = thisBooking.datePicker.value;
+    thisBooking.hour = utils.hourToNumber(thisBooking.hourPicker.value);
+
+    for (let table of thisBooking.dom.tables) {
+      let tableId = table.getAttribute(settings.booking.tableIdAttribute);
+
+      if (!isNaN(tableId)) {
+        tableId = parseInt(tableId);
+      }
+
+      if (typeof thisBooking.booked[thisBooking.date] !== 'undefined' &&
+        typeof thisBooking.booked[thisBooking.date][thisBooking.hour] !== 'undefined' &&
+        thisBooking.booked[thisBooking.date][thisBooking.hour].indexOf(tableId) > -1) {
+
+        table.classList.add(classNames.booking.tableBooked);
+      } else {
+        table.classList.remove(classNames.booking.tableBooked);
+        table.classList.remove(classNames.booking.tableChoosed);
+      }
     }
   }
 }
