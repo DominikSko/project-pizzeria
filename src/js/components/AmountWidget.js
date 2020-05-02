@@ -11,7 +11,7 @@ export class AmountWidget extends BaseWidget {     //dziedziczenie klas, dodali≈
 
     thisWidget.getElements();
     thisWidget.initActions();
-    //thisWidget.value = settings.amountWidget.defaultValue;
+    thisWidget.value = settings.amountWidget.defaultValue;
     //thisWidget.setValue(thisWidget.input.value);
     //console.log('AmountWidget', thisWidget);
     //console.log('constructor arguments', element);

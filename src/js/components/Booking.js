@@ -1,5 +1,6 @@
 
-import {select, templates} from '../settings.js';
+import {select, templates, settings} from '../settings.js';
+import {utils} from '../utils.js';
 import {AmountWidget} from './AmountWidget.js';
 import {DatePicker} from './DatePicker.js';
 import {HourPicker} from './HourPicker.js';
@@ -10,6 +11,7 @@ export class Booking {
 
     thisBooking.render(element);
     thisBooking.initWidgets();
+    thisBooking.getData();
   }
   render(element){
     const thisBooking = this;
@@ -45,5 +47,103 @@ export class Booking {
     thisBooking.datePicker = new DatePicker(thisBooking.dom.datePicker);
     thisBooking.hourPicker = new HourPicker(thisBooking.dom.hourPicker);
 
+  }
+  getData(){
+    const thisBooking = this;
+
+    // Najpierw tworzymy obiekt zawierający daty minDate i maxDate, ustawione w widgecie wyboru daty. To dobre źródło tych wartości, ponieważ potrzebujemy informacji tylko dla dat, które można wybrać w date-pickerze.
+    const startEndDates = {};
+    startEndDates[settings.db.dateStartParamKey] = utils.dateToStr(thisBooking.datePicker.minDate);
+    startEndDates[settings.db.dateEndParamKey] = utils.dateToStr(thisBooking.datePicker.maxDate);
+
+    // Następnie tworzymy obiekt endDate, który zawiera wyłącznie datę końcową. Kluczami w obu tych obiektach są parametry zapisane w settings.db – czyli ciągi znaków 'date_lte' i 'date_gte'. Do uzyskania dat w postaci 2019-01-01 wykorzystaliśmy kolejną z przygotowanych przez nas funkcji pomocniczych – utils.dateToStr.
+    const endDate = {};
+    endDate[settings.db.dateEndParamKey] = startEndDates[settings.db.dateEndParamKey];
+
+    // Wreszcie, całość składamy w całość w obiekcie params, który ma po jednej właściwości dla każdego rodzaju danych, które będą nam potrzebne. Dodaliśmy też console.log – zobacz w konsoli, jak wyglądają przygotowane przez nas parametry zapytań do API.
+    const params = {
+      booking: utils.queryParams(startEndDates),
+      eventsCurrent: settings.db.notRepeatParam + '&' + utils.queryParams(startEndDates),
+      eventsRepeat: settings.db.repeatParam + '&' + utils.queryParams(endDate),
+    };
+
+    //console.log('getData params', params);
+
+    // pełne adresy zapytań, bardzo podobne do przykładowych, które podaliśmy powyżej. Różnią się od nich głównie datami, a także brakiem przedrostka http: – pominięcie go pozwala na używanie tego samego adresu zarówno na stronach wykorzystujących protokół HTTP (nieszyfrowany), jak i HTTPS (szyfrowany).
+    const urls = {
+      booking: settings.db.url + '/' + settings.db.booking + '?' + params.booking,
+      eventsCurrent: settings.db.url + '/' + settings.db.event + '?' + params.eventsCurrent,
+      eventsRepeat: settings.db.url + '/' + settings.db.event + '?' + params.eventsRepeat,
+    };
+
+    //console.log('getData urls', urls);
+
+    // Teraz chcielibyśmy wysłać zapytania pod te trzy adresy, i wykonać jakieś operacje dopiero kiedy wszystkie trzy zwrócą nam odpowiedzi
+    // używamy Promise.all dwukrotnie. Najpierw z pomocą tej metody wysyłamy trzy zapytania pod przygotowane wcześniej adresy. Następnie, w pierwszym .then, ponownie używamy Promise.all, aby sparsować odpowiedzi wszystkich trzech zapytań.
+    // Nowością jest też to, że dzięki zastosowaniu Promise.all, obie funkcje w metodach .then otrzymują jeden argument, który jest tablicą.
+    Promise.all([
+      fetch(urls.booking),
+      fetch(urls.eventsCurrent),
+      fetch(urls.eventsRepeat),
+    ])
+      .then(function([bookingsResponse, eventsCurrentResponse, eventsRepeatResponse]){
+        return Promise.all([
+          bookingsResponse.json(),
+          eventsCurrentResponse.json(),
+          eventsRepeatResponse.json(),
+        ]);
+      })
+      // Po przetworzeniu odpowiedzi z API na obiekty, przekazujemy je do metody thisBooking.parseData, którą za chwilę napiszemy.
+      .then(function([bookings, eventsCurrent, eventsRepeat]){
+        thisBooking.parseData(bookings, eventsCurrent, eventsRepeat);
+      });
+  }
+  parseData(bookings, eventsCurrent, eventsRepeat) {     // do omowienia całe
+    const thisBooking = this;
+
+    thisBooking.booked = {};
+    //console.log('eventsCurrent', eventsCurrent);
+
+    for (let event of eventsCurrent) {
+      //console.log('event from eventsCurrent', event);
+      thisBooking.makeBooked(event.date, event.hour, event.duration, event.table);
+    }
+
+    for (let event of bookings) {
+      //console.log('event from bookings', event);
+      thisBooking.makeBooked(event.date, event.hour, event.duration, event.table);
+    }
+
+    const minDate = thisBooking.datePicker.minDate;
+    const maxDate = thisBooking.datePicker.maxDate;
+
+    for (let event of eventsRepeat) {
+      //console.log('event from eventsRepeat', event);
+      if (event.repeat == 'daily') {
+        for (let eventDate = minDate; eventDate <= maxDate; eventDate = utils.addDays(eventDate, 1)) {
+          thisBooking.makeBooked(utils.dateToStr(eventDate), event.hour, event.duration, event.table);
+        }
+      }
+    }
+    console.log('thisBooking.booked', thisBooking.booked);
+
+
+  }
+  makeBooked(date, hour, duration, table) {           // do omowienia całe
+    const thisBooking = this;
+    if (typeof (thisBooking.booked[date]) == 'undefined') {
+      thisBooking.booked[date] = {};
+    }
+    //console.log(thisBooking.booked[date]);
+
+    const bookedHour = utils.hourToNumber(hour);
+
+    for (let hourBlock = bookedHour; hourBlock < bookedHour + duration; hourBlock += 0.5) {
+      if (typeof thisBooking.booked[date][hourBlock] == 'undefined') {
+        thisBooking.booked[date][hourBlock] = [];
+        //console.log('thisBooking.booked[date][hourBlock]: ', thisBooking.booked[date][hourBlock]);
+      }
+      thisBooking.booked[date][hourBlock].push(table);
+    }
   }
 }

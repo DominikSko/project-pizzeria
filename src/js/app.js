@@ -82,7 +82,7 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
     //thisApp.data = dataSource;  // dlaczego zmieniamy dataSource na thisApp tj this.data ?
     // wrzucamy dane z API
     thisApp.data = {};
-    console.log(thisApp.data);
+    //console.log(thisApp.data);
     // adres endpointu
     const url = settings.db.url + '/' + settings.db.product;
 
@@ -92,7 +92,7 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
         return rawResponse.json();
       })
       .then(function(parsedResponse){
-        console.log('parsedResponse', parsedResponse);
+        //console.log('parsedResponse', parsedResponse);
 
         // save parsedResponse as thisApp.data.products
         thisApp.data.products = parsedResponse;
