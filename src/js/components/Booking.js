@@ -35,8 +35,10 @@ export class Booking {
     thisBooking.dom.hoursAmount = element.querySelector(select.booking.hoursAmount);
     thisBooking.dom.datePicker = element.querySelector(select.widgets.datePicker.wrapper);
     thisBooking.dom.hourPicker = element.querySelector(select.widgets.hourPicker.wrapper);
-
     thisBooking.dom.tables = element.querySelectorAll(select.booking.tables);
+    thisBooking.dom.address = element.querySelector(select.booking.address);
+    thisBooking.dom.phone = element.querySelector(select.booking.phone);
+    thisBooking.dom.starters = element.querySelectorAll(select.booking.starter);
 
   }
   initWidgets(){
@@ -52,6 +54,12 @@ export class Booking {
     // W metodzie initWidgets dodaj dla wrappera listener eventu updated, którego handler wywołuje metodę updateDOM.
     thisBooking.dom.wrapper.addEventListener('updated', function () {
       thisBooking.updateDOM();
+    });
+
+    thisBooking.dom.wrapper.addEventListener('submit', function () {
+      event.preventDefault();
+      thisBooking.sendBooking();
+      thisBooking.getData();
     });
 
   }
@@ -132,7 +140,7 @@ export class Booking {
         }
       }
     }
-    console.log('thisBooking.booked', thisBooking.booked);
+    //console.log('thisBooking.booked', thisBooking.booked);
 
     // komunikat updateDOM nie wyświetla się jednak, jeśli po odświeżeniu strony nie zmienimy daty ani godziny. Aby temu zaradzić, dodaj wywołanie metody updateDOM na końcu metody parseData.
     thisBooking.updateDOM();
@@ -147,6 +155,7 @@ export class Booking {
 
     const bookedHour = utils.hourToNumber(hour);
 
+    // do omówienia !
     for (let hourBlock = bookedHour; hourBlock < bookedHour + duration; hourBlock += 0.5) {
       if (typeof thisBooking.booked[date][hourBlock] == 'undefined') {
         thisBooking.booked[date][hourBlock] = [];
@@ -155,30 +164,86 @@ export class Booking {
       thisBooking.booked[date][hourBlock].push(table);
     }
   }
-  updateDOM() {   // do omowienia całe
+  updateDOM() {   // do omówienia całe
     const thisBooking = this;
 
-    console.log('updated dom');
+    //console.log('updated dom');
 
     thisBooking.date = thisBooking.datePicker.value;
-    thisBooking.hour = utils.hourToNumber(thisBooking.hourPicker.value);
+    thisBooking.hour = utils.hourToNumber(thisBooking.hourPicker.value); //aktualne data i h
 
     for (let table of thisBooking.dom.tables) {
-      let tableId = table.getAttribute(settings.booking.tableIdAttribute);
+      let tableNr = table.getAttribute(settings.booking.tableIdAttribute);
 
-      if (!isNaN(tableId)) {
-        tableId = parseInt(tableId);
+      if (!isNaN(tableNr)) {
+        tableNr = parseInt(tableNr);
       }
 
-      if (typeof thisBooking.booked[thisBooking.date] !== 'undefined' &&
-        typeof thisBooking.booked[thisBooking.date][thisBooking.hour] !== 'undefined' &&
-        thisBooking.booked[thisBooking.date][thisBooking.hour].indexOf(tableId) > -1) {
-
+      if (typeof thisBooking.booked[thisBooking.date] !== 'undefined' && typeof thisBooking.booked[thisBooking.date][thisBooking.hour] !== 'undefined' && thisBooking.booked[thisBooking.date][thisBooking.hour].indexOf(tableNr) > -1) {
         table.classList.add(classNames.booking.tableBooked);
       } else {
         table.classList.remove(classNames.booking.tableBooked);
         table.classList.remove(classNames.booking.tableChoosed);
       }
+
+      //miejsce w ktorym mam potrzebne rzeczy
+
+      table.addEventListener('click', function () {
+        console.log('table selected');
+        // table.classList.toggle(classNames.booking.tableChoosed);
+
+        const tableChoosed = table.classList.contains(classNames.booking.tableBooked);
+        if (!tableChoosed) {
+          table.classList.add(classNames.booking.tableBooked);
+          table.classList.add(classNames.booking.tableChoosed);
+          thisBooking.tableIsBooked = tableNr;
+        }
+      });
     }
+
+  }
+  selectTable(){
+    const thisBooking = this;
+  }
+  sendBooking(){
+    const thisBooking = this;
+
+    const url = settings.db.url + '/' + settings.db.booking;
+
+    // deklarujemy stałą payload, czyli ładunek,
+    const payload = {
+      date: thisBooking.date,
+      hour: utils.numberToHour(thisBooking.hour),
+      table: thisBooking.tableIsBooked,
+      duration: thisBooking.hoursAmount.value,
+      ppl: thisBooking.peopleAmount.value,
+      starters: [],
+      address: thisBooking.dom.address.value,
+      phone: thisBooking.dom.phone.value,
+    };
+
+    for (let starter of thisBooking.dom.starters) {
+      if (starter.checked == true) {               // do omówienia
+        payload.starters.push(starter.value);      // do omówienia
+      }
+    }
+
+    const options = {            //  stała – options – zawiera opcje, które skonfigurują zapytanie
+      method: 'POST',            // zmieniamy GET na POST, która służy do wysyłania nowych danych do API
+      headers: {
+        'Content-Type': 'application/json',    // nagłówek, aby nasz serwer wiedział, że wysyłamy dane w postaci JSONa
+      },
+      body: JSON.stringify(payload),       // Ostatni z nagłówków to body, czyli treść którą wysyłamy. Używamy tutaj metody JSON.stringify
+    };                                     // aby przekonwertować obiekt payload na ciąg znaków w formacie JSON.
+
+
+    // wysłanie zapytania do serwera, dodalismy drugi argument options
+    fetch(url, options)
+      .then(function(response){
+        return response.json();
+      }).then(function(parsedResponse){
+        console.log('parsedResponse', parsedResponse);
+        thisBooking.makeBooked(payload.date, payload.hour, payload.table, payload.duration);
+      });
   }
 }

@@ -133,10 +133,10 @@ export class Cart{
 
     for(let oneProduct of thisCart.products){  // Pod obiektem payload dodaj pętlę iterującą po wszystkich thisCart.products, i dla każdego produktu wywołaj jego metodę getData. Wynik zwracany przez tą metodą dodaj do tablicy payload.products.
       oneProduct.getData();
-      console.log(oneProduct);
+      //console.log(oneProduct);
 
       payload.products.push(oneProduct);
-      console.log(payload.products);
+      //console.log(payload.products);
     }
 
     const options = {            //  stała – options – zawiera opcje, które skonfigurują zapytanie
