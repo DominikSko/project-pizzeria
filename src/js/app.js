@@ -3,7 +3,7 @@
 import { Booking } from './components/Booking.js';
 import { Cart } from './components/Cart.js';
 import { Product } from './components/Product.js';
-import { classNames, select, settings } from './settings.js';
+import { classNames, select, settings, templates } from './settings.js';
 
 const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplikacji
   initMenu: function(){          // deklarację metody
@@ -31,6 +31,8 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
     // zapiszemy jeszcze tablicę linków do podstron
     thisApp.navLinks = Array.from(document.querySelectorAll(select.nav.links));
 
+    thisApp.activatePage(thisApp.pages[0].id);
+
     // znajdujaca sie podstrona pod indeksem 0, wywolanie metody z atrybutem id
     //thisApp.activatePage(thisApp.pages[0].id);
     // nie musimy używać metody getAttribute. Wystarczy odwołać się do właściwości id tego elementu.
@@ -42,9 +44,9 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
       pagesMatchingHash = thisApp.pages.filter(function(page) {
         return page.id == idFromHash;             // do omówienia całość
       });
+      // do omówienia, dlaczego to juest odpowiedzialne ze strona zostaje po przeładowaniu ?
+      thisApp.activatePage(pagesMatchingHash.length ? pagesMatchingHash[0].id : thisApp.pages[0].id);
     }
-    // do omówienia, dlaczego to juest odpowiedzialne ze strona zostaje po przeładowaniu ?
-    thisApp.activatePage(pagesMatchingHash.length ? pagesMatchingHash[0].id : thisApp.pages[0].id);
 
     for (let link of thisApp.navLinks) {
       link.addEventListener('click', function (event) {
@@ -57,24 +59,29 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
 
         // activate page
         thisApp.activatePage(href);
+
+        /*if (id.length == 5) {
+          const cart = document.getElementById('cart');
+          cart.classList.add('exist');
+        }*/
       });
     }
 
   },
-  activatePage: function(pageId){  // do omówienia
+  activatePage(pageId){  // do omówienia
     const thisApp = this;
 
     for (let link of thisApp.navLinks) {
-      link.classList.toggle(classNames.nav.active, link.getAttribute('href') == '#' + pageId);   // do omówienia
+      link.classList.toggle(classNames.nav.active, link.getAttribute('href') == '#' + pageId);  //jeśli link jest taki sam jak id naszej podstrony nadaj mu klasę active.
       //console.log(link);
     }
     for (let page of thisApp.pages) {
-      page.classList.toggle(classNames.nav.active, page.getAttribute('id') == pageId);   // do omówienia
+      page.classList.toggle(classNames.pages.active, page.getAttribute('id') == pageId); //jesli id strony jest równe naszemy pageId czyli argumentowi tej funckji nadajemy jej klase active.
       //console.log(page);
     }
     // Dlatego wprowadzimy kolejną, bardzo przydatną funkcjonalność! Zmiana podstrony będzie zmieniać URL strony, a po odświeżeniu aktywna będzie strona, która jest podana w adresie.
-    window.location.hash = '#/' + pageId;  // location pole w przegladarce na link, hash to hash pod kiniec linku #/booking
-
+    window.location.hash = '#/' + pageId; //zeby po odswiezeniu nie zmieniala sie podstrona i nie przewijała do elementu o id booking tylko pokazywala z samej gory
+    console.log('aktywowano podstronę:', pageId);
 
   },
   initData: function(){         // pobieranie danych naszych produktow z dataSource
@@ -102,7 +109,7 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
         thisApp.initMenu();
 
       });
-    console.log('thisApp.data', JSON.stringify(thisApp.data));
+    //console.log('thisApp.data', JSON.stringify(thisApp.data));
 
   },
   initCart: function(){  // initCart, która będzie inicjować instancję koszyka. Przekażemy jej wrapper (czyli kontener, element okalający) koszyka.
@@ -126,20 +133,31 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
     new Booking(widgetContainer);
     //thisApp.booking = new Booking(thisApp.bookingContainer);
   },
-  init: function(){
+  init: function () { //lista tresci skryptu
     const thisApp = this;
-    //console.log('*** App starting ***');
-    //console.log('thisApp:', thisApp);
-    //console.log('classNames:', classNames);
-    //console.log('settings:', settings);
-    //console.log('templates:', templates);
-
+    console.log('*** App starting ***');
+    console.log('thisApp:', thisApp);
+    console.log('classNames:', classNames);
+    console.log('settings:', settings);
+    console.log('templates:', templates);
+    thisApp.initPages();
     thisApp.initData();
     thisApp.initCart();
-    thisApp.initPages();
     thisApp.initBooking();
-    //thisApp.initMenu();
+    thisApp.initCarousel();
   },
+  initCarousel() {
+    const thisApp = this;
+    $('.carousel').carousel({
+      interval: 3000
+    });
+
+    const logo = document.querySelector('.logo');
+
+    logo.addEventListener('click', function () {
+      thisApp.initPages();
+    });
+  }
 };
 
 app.init();  // wywołanie metody, która będzie uruchamiać wszystkie pozostałe komponenty strony

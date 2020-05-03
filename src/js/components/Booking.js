@@ -187,7 +187,7 @@ export class Booking {
         table.classList.add(classNames.booking.tableBooked);
       } else {
         table.classList.remove(classNames.booking.tableBooked);
-        //table.classList.remove(classNames.booking.tableChoosed);
+        table.classList.remove(classNames.booking.tableChoosed);
       }
 
       //miejsce w ktorym mam potrzebne rzeczy
