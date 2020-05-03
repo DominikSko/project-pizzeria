@@ -47,6 +47,9 @@ export class Cart{
 
     thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
     thisCart.dom.productList = document.querySelector(select.cart.productList);  // dlaczego tak definiujemy ?
+    thisCart.dom.form = document.querySelector(select.cart.form);
+    thisCart.dom.phone = document.querySelector(select.cart.phone);
+    thisCart.dom.address = document.querySelector(select.cart.address);
 
     thisCart.renderTotalsKeys = ['totalNumber', 'totalPrice', 'subtotalPrice', 'deliveryFee']; // do omówienia
 
@@ -54,10 +57,6 @@ export class Cart{
       thisCart.dom[key] = thisCart.dom.wrapper.querySelectorAll(select.cart[key]);
     }
     // Wychwycenie submitu formularza, wysylanie zamowien do API
-    thisCart.dom.form = document.querySelector(select.cart.form);
-
-    thisCart.dom.phone = document.querySelector(select.cart.phone);
-    thisCart.dom.address = document.querySelector(select.cart.address);
   }
   add(menuProduct){  // Generowanie elementów DOM do koszyka
     const thisCart = this;

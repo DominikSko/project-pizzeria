@@ -21,7 +21,7 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
     //const testProduct = new Product();    //tworzymy instancje dla klasy
     //console.log('testProduct:', testProduct);  // wyswietlona w metodzie app.initMenu
   },
-  initPages: function(){
+  initPages(){
     const thisApp = this;
     //znajdziemy wszystkie dzieci tego kontenera za pomocą .children. W ten sposób uzyskamy kolekcję wrapperów podstron.
     // thisApp.pages nie będziemy mieli zapisanej kolekcji elementów, ale tablicę (array) zawierającą elementy.
@@ -41,8 +41,8 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
     if (window.location.hash.length > 2) {         // do omówienia całość
       const idFromHash = window.location.hash.replace('#/', '');
 
-      pagesMatchingHash = thisApp.pages.filter(function(page) {
-        return page.id == idFromHash;             // do omówienia całość
+      pagesMatchingHash = thisApp.pages.filter(function (page) {
+        return page.id == idFromHash;            // do omówienia całość
       });
       // do omówienia, dlaczego to juest odpowiedzialne ze strona zostaje po przeładowaniu ?
       thisApp.activatePage(pagesMatchingHash.length ? pagesMatchingHash[0].id : thisApp.pages[0].id);
@@ -54,16 +54,16 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
         event.preventDefault();
 
         // get page id from href
-        const pageId = clickedElement.getAttribute('href');
-        const href = pageId.replace('#', '');
+        const href = clickedElement.getAttribute('href');
+        const id = href.replace('#', '');
 
         // activate page
-        thisApp.activatePage(href);
+        thisApp.activatePage(id);
 
-        /*if (id.length == 5) {
+        if (id.length == 5) {
           const cart = document.getElementById('cart');
           cart.classList.add('exist');
-        }*/
+        }
       });
     }
 
