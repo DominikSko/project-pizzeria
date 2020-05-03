@@ -146,23 +146,26 @@ export class Booking {
     thisBooking.updateDOM();
 
   }
-  makeBooked(date, hour, duration, table) {           // do omowienia całe
+  makeBooked(date, hour, table, duration) {  // do omówienia
     const thisBooking = this;
-    if (typeof (thisBooking.booked[date]) == 'undefined') {
+
+    if (typeof thisBooking.booked[date] == 'undefined') {
       thisBooking.booked[date] = {};
     }
-    //console.log(thisBooking.booked[date]);
 
-    const bookedHour = utils.hourToNumber(hour);
+    const startHour = utils.hourToNumber(hour);
 
-    // do omówienia !
-    for (let hourBlock = bookedHour; hourBlock < bookedHour + duration; hourBlock += 0.5) {
+    for (let hourBlock = startHour; hourBlock < startHour + duration; hourBlock += 0.5) {
+
       if (typeof thisBooking.booked[date][hourBlock] == 'undefined') {
         thisBooking.booked[date][hourBlock] = [];
-        //console.log('thisBooking.booked[date][hourBlock]: ', thisBooking.booked[date][hourBlock]);
       }
-      thisBooking.booked[date][hourBlock].push(table);
+
+      if (thisBooking.booked[date][hourBlock].indexOf(table) == -1) {
+        thisBooking.booked[date][hourBlock].push(table);
+      }
     }
+
   }
   updateDOM() {   // do omówienia całe
     const thisBooking = this;
