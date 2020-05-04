@@ -20,7 +20,7 @@
 
 
 #nav-order {
-  //@extend %h1;
+  @extend %h1;
   color: $color-light;
   text-decoration: none;
   margin-right: $base-size;
@@ -49,7 +49,7 @@
 }
 
 #nav-booking {
-  //@extend %h1;
+  @extend %h1;
   color: $color-light;
   text-decoration: none;
   text-align: center;
@@ -76,7 +76,7 @@
 }
 
 .open-hours {
-  //@extend %h1;
+  @extend %h1;
   color: $color-light;
   text-decoration: none;
   text-align: center;

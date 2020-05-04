@@ -135,8 +135,8 @@ export class Booking {
     for (let event of eventsRepeat) {
       //console.log('event from eventsRepeat', event);
       if (event.repeat == 'daily') {
-        for (let eventDate = minDate; eventDate <= maxDate; eventDate = utils.addDays(eventDate, 1)) {
-          thisBooking.makeBooked(utils.dateToStr(eventDate), event.hour, event.duration, event.table);
+        for (let dayDate = minDate; dayDate <= maxDate; dayDate = utils.addDays(dayDate, 1)) {
+          thisBooking.makeBooked(utils.dateToStr(dayDate), event.hour, event.table, event.duration);
         }
       }
     }
@@ -146,7 +146,7 @@ export class Booking {
     thisBooking.updateDOM();
 
   }
-  makeBooked(date, hour, table, duration) {  // do omówienia
+  makeBooked(date, hour, table, duration) {   // do omówienia
     const thisBooking = this;
 
     if (typeof thisBooking.booked[date] == 'undefined') {
@@ -165,7 +165,6 @@ export class Booking {
         thisBooking.booked[date][hourBlock].push(table);
       }
     }
-
   }
   updateDOM() {   // do omówienia całe
     const thisBooking = this;
