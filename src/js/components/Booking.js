@@ -152,18 +152,16 @@ export class Booking {
     if (typeof thisBooking.booked[date] == 'undefined') {
       thisBooking.booked[date] = {};
     }
+    //console.log(thisBooking.booked[date]);
 
-    const startHour = utils.hourToNumber(hour);
+    const bookedHour = utils.hourToNumber(hour);
 
-    for (let hourBlock = startHour; hourBlock < startHour + duration; hourBlock += 0.5) {
-
+    for (let hourBlock = bookedHour; hourBlock < bookedHour + duration; hourBlock += 0.5) {
       if (typeof thisBooking.booked[date][hourBlock] == 'undefined') {
         thisBooking.booked[date][hourBlock] = [];
+        // console.log('thisBooking.booked[date][hourBlock]: ', thisBooking.booked[date][hourBlock]);
       }
-
-      if (thisBooking.booked[date][hourBlock].indexOf(table) == -1) {
-        thisBooking.booked[date][hourBlock].push(table);
-      }
+      thisBooking.booked[date][hourBlock].push(table);
     }
   }
   updateDOM() {   // do omówienia całe

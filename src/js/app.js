@@ -24,15 +24,14 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
     //znajdziemy wszystkie dzieci tego kontenera za pomocą .children. W ten sposób uzyskamy kolekcję wrapperów podstron.
     // thisApp.pages nie będziemy mieli zapisanej kolekcji elementów, ale tablicę (array) zawierającą elementy.
     thisApp.pages = Array.from(document.querySelector(select.containerOf.pages).children);
-    console.log(thisApp.pages);
+    //console.log(thisApp.pages);
 
     // zapiszemy jeszcze tablicę linków do podstron
     thisApp.navLinks = Array.from(document.querySelectorAll(select.nav.links));
 
+    // znajdujaca sie podstrona pod indeksem 0, wywolanie metody z atrybutem id
     thisApp.activatePage(thisApp.pages[0].id);
 
-    // znajdujaca sie podstrona pod indeksem 0, wywolanie metody z atrybutem id
-    //thisApp.activatePage(thisApp.pages[0].id);
     // nie musimy używać metody getAttribute. Wystarczy odwołać się do właściwości id tego elementu.
     let pagesMatchingHash = [];
 
@@ -42,9 +41,10 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
       pagesMatchingHash = thisApp.pages.filter(function (page) {
         return page.id == idFromHash;            // do omówienia całość
       });
-    }
-    // do omówienia, dlaczego to juest odpowiedzialne ze strona zostaje po przeładowaniu ?
+      // do omówienia, dlaczego to juest odpowiedzialne ze strona zostaje po przeładowaniu ?
     thisApp.activatePage(pagesMatchingHash.length ? pagesMatchingHash[0].id : thisApp.pages[0].id);
+    }
+
 
     for (let link of thisApp.navLinks) {
       link.addEventListener('click', function (event) {
@@ -61,6 +61,7 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
         if (id.length == 5) {
           const cart = document.getElementById('cart');
           cart.classList.add('exist');
+          //console.log(cart.classList);
         }
       });
     }
@@ -79,7 +80,7 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
     }
     // Dlatego wprowadzimy kolejną, bardzo przydatną funkcjonalność! Zmiana podstrony będzie zmieniać URL strony, a po odświeżeniu aktywna będzie strona, która jest podana w adresie.
     window.location.hash = '#/' + pageId; //zeby po odswiezeniu nie zmieniala sie podstrona i nie przewijała do elementu o id booking tylko pokazywala z samej gory
-    document.body.classList = pageId;
+    //document.body.classList = pageId;
     console.log('aktywowano podstronę:', pageId);
 
   },
