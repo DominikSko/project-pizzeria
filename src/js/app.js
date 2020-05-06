@@ -31,6 +31,7 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
 
     // znajdujaca sie podstrona pod indeksem 0, wywolanie metody z atrybutem id
     thisApp.activatePage(thisApp.pages[0].id);
+    //console.log(thisApp.pages[0].id)
 
     // nie musimy używać metody getAttribute. Wystarczy odwołać się do właściwości id tego elementu.
     let pagesMatchingHash = [];
@@ -42,7 +43,7 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
         return page.id == idFromHash;            // do omówienia całość
       });
       // do omówienia, dlaczego to juest odpowiedzialne ze strona zostaje po przeładowaniu ?
-    thisApp.activatePage(pagesMatchingHash.length ? pagesMatchingHash[0].id : thisApp.pages[0].id);
+      thisApp.activatePage(pagesMatchingHash.length ? pagesMatchingHash[0].id : thisApp.pages[0].id);
     }
 
 
@@ -58,10 +59,11 @@ const app = {      // obiekt który pomoże nam w organizacji kodu naszej aplika
         // activate page
         thisApp.activatePage(id);
 
-        if (id.length == 5) {
-          const cart = document.getElementById('cart');
+        const cart = document.getElementById('cart');
+        if (id === 'order') {
           cart.classList.add('exist');
-          //console.log(cart.classList);
+        } else {
+          cart.classList.remove('exist');
         }
       });
     }

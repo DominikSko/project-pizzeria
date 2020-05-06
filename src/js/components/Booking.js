@@ -59,7 +59,7 @@ export class Booking {
     thisBooking.dom.wrapper.addEventListener('submit', function () {
       event.preventDefault();
       thisBooking.sendBooking();
-      thisBooking.getData();
+      //thisBooking.getData();
     });
 
   }
