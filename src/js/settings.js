@@ -112,8 +112,9 @@ export const settings = {
   booking: {
     tableIdAttribute: 'data-table',
   },
-  db: {
-    url: '//localhost:3131',
+  db: {      // Dlatego musimy zmienić w pliku settings.js adres, pod którym będzie dostępne API
+    // jeśli tą domeną będzie localhost, dodamy do adresu informację o porcie :3131.
+    url: '//' + window.location.hostname + (window.location.hostname=='localhost' ? ':3131' : ''),
     product: 'product',
     order: 'order',
     booking: 'booking',

@@ -206,9 +206,6 @@ export class Booking {
     }
 
   }
-  selectTable(){
-    const thisBooking = this;
-  }
   sendBooking(){
     const thisBooking = this;
 
